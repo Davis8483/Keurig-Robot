@@ -45,24 +45,31 @@ class Venmo():
 
         return img
     
-    def wait_for_payment(self, interupt) -> type:
+    def wait_for_payment(self, interupt:bool) -> type:
         '''
-        Returns true once payment has gone through
+        Wait until payment is recieved
+        Returns either PAYMENT_BELOW_REQUEST or PAYMENT_ACCEPTED
         '''
-        # poll the api until a payment request is recieved
-        payment = self.venmo.payment.get_pay_payments(limit=1)[0]
-        while not interupt and payment == PaymentStatus.PENDING:
+        while not interupt:
+            print(self.venmo.payment.get_pay_payments(limit=10))
             time.sleep(1)
+        # pay_payments = self.venmo.payment.get_pay_payments(limit=1)
+        # if len(pay_payments) == 0:
 
-            # poll the api
-            payment = self.venmo.payment.get_pay_payments(limit=1)[0]
+        # # poll the api until a payment request is recieved
+        # payment = pay_payments[0]
+        # while not interupt and payment == PaymentStatus.PENDING:
+        #     time.sleep(1)
 
-        # check if the payment was the correct ammount
-        if payment.amount >= self.payment_amount:
-            return Venmo.PAYMENT_ACCEPTED
-        else:
-            # self.venmo.payment.send_money
-            return Venmo.PAYMENT_BELOW_REQUEST
+        #     # poll the api
+        #     payment = self.venmo.payment.get_pay_payments(limit=1)[0]
+
+        # # check if the payment was the correct ammount
+        # if payment.amount >= self.payment_amount:
+        #     return Venmo.PAYMENT_ACCEPTED
+        # else:
+        #     # self.venmo.payment.send_money
+        #     return Venmo.PAYMENT_BELOW_REQUEST
     
     def clear_payments(self) -> None:
         '''

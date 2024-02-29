@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import threading
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
 import coffee_payment
@@ -11,9 +12,13 @@ from PIL.ImageQt import ImageQt
 venmo_payment = coffee_payment.Venmo(username="Noah-Davis-244", 
                                     password="YdU671IYaT!!OKC")
 
-
 test = venmo_payment.payment_qr(amount=0.01)
-print(type(test))
+def myThread():
+    print("waiting for payment")
+    venmo_payment.wait_for_payment(False)
+
+t = threading.Thread(target=myThread)
+t.start()
 
 
 class Window(QMainWindow):
