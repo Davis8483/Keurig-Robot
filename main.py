@@ -12,7 +12,8 @@ from PIL.ImageQt import ImageQt
 venmo_payment = coffee_payment.Venmo(username="Noah-Davis-244", 
                                     password="YdU671IYaT!!OKC")
 
-test = venmo_payment.payment_qr(amount=0.01)
+test = venmo_payment.payment_qr(amount=0.01,
+                                note="Coffee Test")
 def myThread():
     print("waiting for payment")
     venmo_payment.wait_for_payment(False)

@@ -17,11 +17,12 @@ class Venmo():
         # initialize venmo api
         self.venmo = Client(access_token=access_token)
 
-    def payment_qr(self, amount:float) -> qrcode.image:
+    def payment_qr(self, amount:float, note:str="") -> qrcode.image:
         '''
         Returns a qr code that brings up a payment form to the venmo user
 
         amount: the amount you want auto filled in the payment request
+        note: the note to auto fill on the payment request
         '''
 
         self.payment_amount = amount
@@ -38,7 +39,8 @@ class Venmo():
         border=4,
         )
 
-        venmo_qr.add_data(f"https://venmo.com/payment-link?amount={self.payment_amount}&recipients={self.username}&txn=pay")
+        note = note.replace(" ", "+")
+        venmo_qr.add_data(f"https://venmo.com/payment-link?txn=pay&recipients={self.username}&amount={self.payment_amount}&note={note}")
         venmo_qr.make(fit=True)
 
         img = venmo_qr.make_image(fill_color="black", back_color="white")
