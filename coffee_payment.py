@@ -55,6 +55,9 @@ class Venmo():
         while not interupt:
             print(self.venmo.payment.get_pay_payments(limit=10))
             time.sleep(1)
+            # self.venmo.payment.cancel_payment
+            if len(self.venmo.payment.get_pay_payments(limit=10)) > 0:
+                print(self.venmo.payment.__update_payment("settle", self.venmo.payment.get_pay_payments(limit=1)[0]))
         # pay_payments = self.venmo.payment.get_pay_payments(limit=1)
         # if len(pay_payments) == 0:
 
