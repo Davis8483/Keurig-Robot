@@ -1,14 +1,19 @@
 import subprocess
 import sys
+import os
 import threading
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
 import coffee_payment
+from git import Repo
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QVBoxLayout, QWidget
 from PIL.ImageQt import ImageQt
 
+# update from github
+Repo.clone_from("https://github.com/Davis8483/Robotic-Coffee-Dispenser.git", os.getcwd())
+# print(os.getcwd())
 venmo_payment = coffee_payment.Venmo(username="Noah-Davis-244", 
                                     password="YdU671IYaT!!OKC")
 
