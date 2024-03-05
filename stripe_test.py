@@ -19,7 +19,7 @@ link = stripe.PaymentLink.create(
 
 print(link.url)
 qr = qrcode.make(link.url)
-qr.show()
+qr.save("test.png")
 
 while True:
     
