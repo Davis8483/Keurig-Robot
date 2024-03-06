@@ -2,7 +2,7 @@ import stripe
 import qrcode
 import time
 
-stripe.api_key = "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"
+stripe.api_key = "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"
 
 product = stripe.Product.list().data[0]
 
@@ -19,7 +19,7 @@ link = stripe.PaymentLink.create(
 
 print(link.url)
 qr = qrcode.make(link.url)
-qr.show()
+qr.save("test.png")
 
 while True:
     

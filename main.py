@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 import threading
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
@@ -111,7 +112,7 @@ class stackedExample(QWidget):
 
         for index in range(5):
             new_product = QLabel()
-            new_product.setPixmap(QPixmap('test.png').scaledToHeight(500))
+            new_product.setPixmap(QPixmap('placeholder.png').scaledToHeight(500))
 
             product_layout.addWidget(new_product)
 
