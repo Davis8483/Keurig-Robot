@@ -4,53 +4,139 @@ import threading
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
 import coffee_payment
-from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QVBoxLayout, QWidget
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtWidgets import *
 from PIL.ImageQt import ImageQt
 
-venmo_payment = coffee_payment.Venmo(username="Noah-Davis-244", 
-                                    password="YdU671IYaT!!OKC")
+##Example code for loading qr code supplied by coffee_payment.Stripe()
+#qim = ImageQt(your_qr_code)
+#pix = QPixmap.fromImage(qim
 
-test = venmo_payment.payment_qr(amount=0.01,
-                                note="Coffee Test")
-def myThread():
-    print("waiting for payment")
-    venmo_payment.wait_for_payment(False)
+class stackedExample(QWidget):
 
-t = threading.Thread(target=myThread)
-t.start()
-
-
-class Window(QMainWindow):
     def __init__(self):
-        super().__init__()
+        super(stackedExample, self).__init__()
+            
+        self.stack1 = QWidget()
+        self.stack2 = QWidget()
+            
+        self.stack1UI()
+        self.stack2UI()
+            
+        self.Stack = QStackedLayout (self)
+        self.Stack.addWidget (self.stack1)
+        self.Stack.addWidget (self.stack2)
 
-        self.setWindowTitle("Image")
-        self.setGeometry(0, 0, 400, 300)
+        self.setLayout(self.Stack)
+        self.setWindowTitle('StackedWidget demo')
+        self.showFullScreen()
+        self.show()
+		
+    def stack1UI(self):
+ 
+        layout = QVBoxLayout()
 
-        # Create a central widget
-        central_widget = QWidget(self)
-        self.setCentralWidget(central_widget)
+        start_label = QLabel("Tap to start...")
+        start_label.setStyleSheet('''
+                                    font-size: 50px;
+                                    color: #091236;
+                                  ''')
 
-        # Create a vertical layout
-        layout = QVBoxLayout(central_widget)
+        layout.addWidget(start_label)
+        layout.setAlignment(Qt.AlignmentFlag.AlignAbsolute)
 
-        # Assuming 'test' is your QR code image
-        # Convert it to a QPixmap
-        qim = ImageQt(test)
-        pix = QPixmap.fromImage(qim)
+        self.stack1.setLayout(layout)
+		
+    def stack2UI(self):
+        layout = QHBoxLayout()
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
 
-        # Create the image label
-        self.label = QLabel(self)
-        self.label.setPixmap(pix.scaled(300, 300))
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Set alignment to center
+        sidebar_layout = QVBoxLayout()
+        sidebar_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        sidebar_layout.setSpacing(20)
+        sidebar_layout.setContentsMargins(20, 20, 20, 30)
 
-        # Add the image label to the layout
-        layout.addWidget(self.label)
+        product_name_label = QLabel("Product Name")
+        product_name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        product_name_label.setStyleSheet('''
+                                        QLabel{
+                                        font-size: 25px;
+                                        font-weight: bold;
+                                        color: #ffffff;
+                                        }
+                                        ''')
+        
+        sidebar_layout.addWidget(product_name_label)
 
-if __name__ == "__main__":
+        pay_button = QPushButton("Pay 2.49")
+        pay_button.setStyleSheet('''
+                                QPushButton{
+                                    font-size: 20px;
+                                    min-width: 300px;
+                                    height: 40px;
+                                    color: #101010;
+                                    padding: 5px 10px;
+                                    font-weight: bold;
+                                    position: relative;
+                                    outline: none;
+                                    border-radius: 20px;
+                                    border: none;
+                                    background: #ffffff;
+                                }
+                                QPushButton::pressed{
+                                    background: #808080;
+                                }
+                                ''')
+
+        sidebar_layout.addWidget(pay_button)
+
+        sidebar_widget = QWidget()
+        sidebar_widget.setLayout(sidebar_layout)
+        sidebar_widget.setStyleSheet('''
+                                    QWidget{
+                                        background: #202020;
+                                    }
+                                    ''')
+
+        product_slider = QScrollArea()
+        # product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # product_slider.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        product_slider.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        product_slider.setFrameShape(QFrame.Shape.NoFrame)
+
+        product_layout = QHBoxLayout()
+
+        for index in range(5):
+            new_product = QLabel()
+            new_product.setPixmap(QPixmap('test.png').scaledToHeight(500))
+
+            product_layout.addWidget(new_product)
+
+        scroll_widget = QWidget()
+        scroll_widget.setLayout(product_layout)
+
+        product_slider.setWidget(scroll_widget)
+
+        layout.addWidget(product_slider)
+        layout.addWidget(sidebar_widget)
+        
+        self.stack2.setLayout(layout)
+
+    def keyPressEvent(self, e):  
+        if e.key() == Qt.Key.Key_Escape:
+            self.close()
+
+    def mouseReleaseEvent(self, a0: QMouseEvent | None) -> None:
+        if self.Stack.currentWidget() == self.stack1:
+            self.Stack.setCurrentWidget(self.stack2)
+		
+def main():
     app = QApplication(sys.argv)
-    window = Window()
-    window.show()
+    ex = stackedExample()
     sys.exit(app.exec())
+	
+if __name__ == '__main__':
+    main()
