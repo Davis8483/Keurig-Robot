@@ -87,10 +87,24 @@ class stackedExample(QWidget):
                                     border: none;
                                     background: #ffffff;
                                 }
-                                QPushButton::pressed{
-                                    background: #808080;
-                                }
                                 ''')
+        
+        pressed_style = '''
+                        QPushButton{
+                            font-size: 20px;
+                            min-width: 300px;
+                            height: 40px;
+                            color: #101010;
+                            padding: 5px 10px;
+                            font-weight: bold;
+                            position: relative;
+                            outline: none;
+                            border-radius: 20px;
+                            border: none;
+                            background: #808080;
+                        }
+                        '''
+        pay_button.clicked.connect(lambda *_: pay_button.setStyleSheet(pressed_style))
 
         sidebar_layout.addWidget(pay_button)
 
@@ -102,13 +116,15 @@ class stackedExample(QWidget):
                                     }
                                     ''')
 
-        product_slider = QScrollArea()
+        product_slider = DraggableScrollArea()
         # product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # product_slider.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         product_slider.setAlignment(Qt.AlignmentFlag.AlignCenter)
         product_slider.setFrameShape(QFrame.Shape.NoFrame)
 
         product_layout = QHBoxLayout()
+        product_layout.setSpacing(30)
+        product_layout.setContentsMargins(30, 30, 30, 30)
 
         for index in range(5):
             new_product = QLabel()
@@ -134,6 +150,26 @@ class stackedExample(QWidget):
         if self.Stack.currentWidget() == self.stack1:
             self.Stack.setCurrentWidget(self.stack2)
 		
+class DraggableScrollArea(QScrollArea):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setWidgetResizable(True)  # Allow resizing of scroll area content
+        self.last_drag_pos = None
+
+    def mousePressEvent(self, event):
+        if event.buttons() == Qt.MouseButton.LeftButton:
+            self.last_drag_pos = event.pos()
+
+    def mouseMoveEvent(self, event):
+        if self.last_drag_pos is not None:
+            delta = event.pos() - self.last_drag_pos
+            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() - delta.x())
+            self.verticalScrollBar().setValue(self.verticalScrollBar().value() - delta.y())
+            self.last_drag_pos = event.pos()
+
+    def mouseReleaseEvent(self, event):
+        self.last_drag_pos = None
+
 def main():
     app = QApplication(sys.argv)
     ex = stackedExample()
