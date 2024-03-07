@@ -71,39 +71,22 @@ class stackedExample(QWidget):
         
         sidebar_layout.addWidget(product_name_label, 0, Qt.AlignmentFlag.AlignCenter)
 
-        pay_button = QPushButton("Pay 2.49")
+        pay_button = QPushButton("Pay")
         pay_button.setStyleSheet('''
                                 QPushButton{
                                     font-size: 20px;
                                     min-width: 300px;
                                     height: 40px;
-                                    color: #101010;
+                                    color: #ffffff;
                                     padding: 5px 10px;
                                     font-weight: bold;
                                     position: relative;
                                     outline: none;
                                     border-radius: 20px;
                                     border: none;
-                                    background: #ffffff;
+                                    background: #476ade;
                                 }
                                 ''')
-        
-        pressed_style = '''
-                        QPushButton{
-                            font-size: 20px;
-                            min-width: 300px;
-                            height: 40px;
-                            color: #101010;
-                            padding: 5px 10px;
-                            font-weight: bold;
-                            position: relative;
-                            outline: none;
-                            border-radius: 20px;
-                            border: none;
-                            background: #808080;
-                        }
-                        '''
-        pay_button.clicked.connect(lambda *_: pay_button.setStyleSheet(pressed_style))
 
         sidebar_layout.addWidget(pay_button, 0, Qt.AlignmentFlag.AlignCenter)
 
@@ -120,28 +103,96 @@ class stackedExample(QWidget):
         # product_slider.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         product_slider.setAlignment(Qt.AlignmentFlag.AlignCenter)
         product_slider.setFrameShape(QFrame.Shape.NoFrame)
+        product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-        def hide_products():
+        def set_payment_view(show:bool=False) -> None:
+            "When show is True, the payment qr code will slide into view"
+
+            # disable butotn
+            pay_button.clicked.disconnect()
+
+            if show:
+                # save the product section width so we can revert back to this later
+                self.product_shown_width = product_slider.width()
+            
             def timer_callback():
                 # use a porabola to ease the sliding animation
-                self.products_width -= int(0.005 * (self.product_hider_x ** 2))
+                increment = int(0.005 * (self.product_view_x ** 2))
 
-                if self.products_width <= 0:
-                    product_slider.setFixedWidth(0)
-                    self.timer.stop()
-                
+                if show:
+                    new_width = product_slider.width() - increment
+                    if new_width <= 0:
+                        # we're close enough, jump to the end
+                        product_slider.setFixedWidth(0)
+
+                        # stop the animation event timer
+                        self.timer.stop()
+
+                        # change button properties
+                        pay_button.clicked.connect(lambda *_: set_payment_view(show=False))
+                        pay_button.setText("Back")
+                        pay_button.setStyleSheet('''
+                                                QPushButton{
+                                                    font-size: 20px;
+                                                    min-width: 300px;
+                                                    height: 40px;
+                                                    color: #ffffff;
+                                                    padding: 5px 10px;
+                                                    font-weight: bold;
+                                                    position: relative;
+                                                    outline: none;
+                                                    border-radius: 20px;
+                                                    border: none;
+                                                    background: #de4747;
+                                                }
+                                                ''') 
+
+                        product_name_label.hide()   
+                    
+                    else:
+                        product_slider.setFixedWidth(new_width)
                 else:
-                    product_slider.setFixedWidth(self.products_width)
-                    self.product_hider_x += 1
+                    new_width = product_slider.width() + increment
+                    if new_width >= self.product_shown_width:
+                        # we're close enough, jump to the end
+                        product_slider.setFixedWidth(self.product_shown_width)
+
+                        # stop the animation event timer
+                        self.timer.stop()
+
+                        # change button properties
+                        pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
+                        pay_button.setText("Pay")
+                        pay_button.setStyleSheet('''
+                                                QPushButton{
+                                                    font-size: 20px;
+                                                    min-width: 300px;
+                                                    height: 40px;
+                                                    color: #ffffff;
+                                                    padding: 5px 10px;
+                                                    font-weight: bold;
+                                                    position: relative;
+                                                    outline: none;
+                                                    border-radius: 20px;
+                                                    border: none;
+                                                    background: #476ade;
+                                                }
+                                                ''')
+                        product_name_label.show()   
+                    
+                    else:
+                        product_slider.setFixedWidth(new_width)
+
+
+                self.product_view_x += 1
 
             self.timer=QTimer()
             self.timer.timeout.connect(timer_callback)
 
-            self.products_width = product_slider.width()
-            self.product_hider_x = 0
+            self.product_view_x = 0
             self.timer.start(5)
-
-        pay_button.clicked.connect(lambda *_: hide_products())
+        
+        pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
         
         product_layout = QHBoxLayout()
         product_layout.setSpacing(30)
