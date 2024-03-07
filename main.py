@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import os
-import threading
+import time
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
 import coffee_payment
@@ -61,7 +61,6 @@ class stackedExample(QWidget):
         sidebar_layout.setContentsMargins(20, 20, 20, 30)
 
         product_name_label = QLabel("Product Name")
-        product_name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         product_name_label.setStyleSheet('''
                                         QLabel{
                                         font-size: 25px;
@@ -70,7 +69,7 @@ class stackedExample(QWidget):
                                         }
                                         ''')
         
-        sidebar_layout.addWidget(product_name_label)
+        sidebar_layout.addWidget(product_name_label, 0, Qt.AlignmentFlag.AlignCenter)
 
         pay_button = QPushButton("Pay 2.49")
         pay_button.setStyleSheet('''
@@ -106,7 +105,7 @@ class stackedExample(QWidget):
                         '''
         pay_button.clicked.connect(lambda *_: pay_button.setStyleSheet(pressed_style))
 
-        sidebar_layout.addWidget(pay_button)
+        sidebar_layout.addWidget(pay_button, 0, Qt.AlignmentFlag.AlignCenter)
 
         sidebar_widget = QWidget()
         sidebar_widget.setLayout(sidebar_layout)
@@ -122,6 +121,28 @@ class stackedExample(QWidget):
         product_slider.setAlignment(Qt.AlignmentFlag.AlignCenter)
         product_slider.setFrameShape(QFrame.Shape.NoFrame)
 
+        def hide_products():
+            def timer_callback():
+                # use a porabola to ease the sliding animation
+                self.products_width -= int(0.005 * (self.product_hider_x ** 2))
+
+                if self.products_width <= 0:
+                    product_slider.setFixedWidth(0)
+                    self.timer.stop()
+                
+                else:
+                    product_slider.setFixedWidth(self.products_width)
+                    self.product_hider_x += 1
+
+            self.timer=QTimer()
+            self.timer.timeout.connect(timer_callback)
+
+            self.products_width = product_slider.width()
+            self.product_hider_x = 0
+            self.timer.start(5)
+
+        pay_button.clicked.connect(lambda *_: hide_products())
+        
         product_layout = QHBoxLayout()
         product_layout.setSpacing(30)
         product_layout.setContentsMargins(30, 30, 30, 30)
@@ -149,7 +170,7 @@ class stackedExample(QWidget):
     def mouseReleaseEvent(self, a0: QMouseEvent | None) -> None:
         if self.Stack.currentWidget() == self.stack1:
             self.Stack.setCurrentWidget(self.stack2)
-		
+
 class DraggableScrollArea(QScrollArea):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
