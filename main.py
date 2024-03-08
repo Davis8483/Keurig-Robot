@@ -56,10 +56,19 @@ class stackedExample(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
 
         sidebar_layout = QVBoxLayout()
-        sidebar_layout.setAlignment(Qt.AlignmentFlag.AlignBottom)
+        sidebar_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         sidebar_layout.setSpacing(20)
-        sidebar_layout.setContentsMargins(20, 20, 20, 30)
+        sidebar_layout.setContentsMargins(30, 30, 30, 30) 
 
+        sidebar_layout.addStretch()
+
+        pay_qr_image = QLabel()
+        pay_qr_image.setPixmap(QPixmap('placeholder.png').scaledToHeight(800))
+        pay_qr_image.hide()
+        sidebar_layout.addWidget(pay_qr_image)
+        sidebar_layout.addStretch()
+
+        
         product_name_label = QLabel("Product Name")
         product_name_label.setStyleSheet('''
                                         QLabel{
@@ -74,9 +83,9 @@ class stackedExample(QWidget):
         pay_button = QPushButton("Pay")
         pay_button.setStyleSheet('''
                                 QPushButton{
-                                    font-size: 20px;
-                                    min-width: 300px;
-                                    height: 40px;
+                                    font-size: 25px;
+                                    width: 300px;
+                                    height: 60px;
                                     color: #ffffff;
                                     padding: 5px 10px;
                                     font-weight: bold;
@@ -88,8 +97,9 @@ class stackedExample(QWidget):
                                 }
                                 ''')
 
-        sidebar_layout.addWidget(pay_button, 0, Qt.AlignmentFlag.AlignCenter)
+        sidebar_layout.addWidget(pay_button)
 
+        # use a widget to store the sidebar layout so we can set a styelsheet
         sidebar_widget = QWidget()
         sidebar_widget.setLayout(sidebar_layout)
         sidebar_widget.setStyleSheet('''
@@ -115,6 +125,9 @@ class stackedExample(QWidget):
                 # save the product section width so we can revert back to this later
                 self.product_shown_width = product_slider.width()
             
+            else:
+                pay_qr_image.hide()
+            
             def timer_callback():
                 # use a porabola to ease the sliding animation
                 increment = int(0.005 * (self.product_view_x ** 2))
@@ -133,9 +146,9 @@ class stackedExample(QWidget):
                         pay_button.setText("Back")
                         pay_button.setStyleSheet('''
                                                 QPushButton{
-                                                    font-size: 20px;
-                                                    min-width: 300px;
-                                                    height: 40px;
+                                                    font-size: 25px;
+                                                    width: 300px;
+                                                    height: 60px;
                                                     color: #ffffff;
                                                     padding: 5px 10px;
                                                     font-weight: bold;
@@ -146,8 +159,7 @@ class stackedExample(QWidget):
                                                     background: #de4747;
                                                 }
                                                 ''') 
-
-                        product_name_label.hide()   
+                        pay_qr_image.show()
                     
                     else:
                         product_slider.setFixedWidth(new_width)
@@ -165,9 +177,9 @@ class stackedExample(QWidget):
                         pay_button.setText("Pay")
                         pay_button.setStyleSheet('''
                                                 QPushButton{
-                                                    font-size: 20px;
-                                                    min-width: 300px;
-                                                    height: 40px;
+                                                    font-size: 25px;
+                                                    width: 300px;
+                                                    height: 60px;
                                                     color: #ffffff;
                                                     padding: 5px 10px;
                                                     font-weight: bold;
@@ -178,7 +190,6 @@ class stackedExample(QWidget):
                                                     background: #476ade;
                                                 }
                                                 ''')
-                        product_name_label.show()   
                     
                     else:
                         product_slider.setFixedWidth(new_width)
