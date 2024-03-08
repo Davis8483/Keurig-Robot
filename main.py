@@ -113,7 +113,7 @@ class stackedExample(QWidget):
         # product_slider.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         product_slider.setAlignment(Qt.AlignmentFlag.AlignCenter)
         product_slider.setFrameShape(QFrame.Shape.NoFrame)
-        product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
         def set_payment_view(show:bool=False) -> None:
             "When show is True, the payment qr code will slide into view"
@@ -206,14 +206,20 @@ class stackedExample(QWidget):
         pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
         
         product_layout = QHBoxLayout()
-        product_layout.setSpacing(30)
-        product_layout.setContentsMargins(30, 30, 30, 30)
+        product_layout.setSpacing(500)
+        product_layout.setContentsMargins(500, 0, 500, 0)
 
+        product_slider.eventFilter
+        products = []
         for index in range(5):
-            new_product = QLabel()
-            new_product.setPixmap(QPixmap('placeholder.png').scaledToHeight(500))
+            products.append(QLabel())
+            products[index].setPixmap(QPixmap('placeholder.png').scaledToHeight(500))
 
-            product_layout.addWidget(new_product)
+            product_layout.addWidget(products[index])
+
+        button = QPushButton("test")
+        button.clicked.connect(lambda *_: product_slider.ensureWidgetVisible(products[3], 1000, 1000))
+        sidebar_layout.addWidget(button)
 
         scroll_widget = QWidget()
         scroll_widget.setLayout(product_layout)
@@ -251,6 +257,22 @@ class DraggableScrollArea(QScrollArea):
             self.last_drag_pos = event.pos()
 
     def mouseReleaseEvent(self, event):
+        """Centers the slider on the closest widget when the user releases it."""
+
+        # Get slider position and widget size
+        slider_pos = self.horizontalScrollBar().sliderPosition()
+        widget_spacing = (self.widget().width() - (self.width() / 2)) / 5  # Assuming six equal-width widgets
+
+        # Calculate potential snap positions (centers of each widget)
+        snap_positions = [i * (widget_spacing / 2) for i in range(5)]
+
+        # Find the closest snap position based on current slider position
+        closest_snap_pos = min(snap_positions, key=lambda pos: abs(pos - slider_pos))
+
+        # Set slider position to the closest snap position
+        self.horizontalScrollBar().setSliderPosition(int(closest_snap_pos))
+
+        # Clear last drag position (optional for potential future use)
         self.last_drag_pos = None
 
 def main():
