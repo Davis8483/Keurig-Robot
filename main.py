@@ -63,7 +63,7 @@ class stackedExample(QWidget):
         sidebar_layout.addStretch()
 
         pay_qr_image = QLabel()
-        pay_qr_image.setPixmap(QPixmap('placeholder.png').scaledToHeight(800))
+        pay_qr_image.setPixmap(QPixmap('placeholder.png').scaledToHeight(400))
         pay_qr_image.hide()
         sidebar_layout.addWidget(pay_qr_image)
         sidebar_layout.addStretch()
