@@ -1,5 +1,8 @@
 {
-    "hardware-config":{
-        "vending-slots": 5
+    "stripe":{
+        "api_key": "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"
+    },
+    "hardware":{
+        "vending_slots": 5
     }
 }
