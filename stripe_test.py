@@ -1,8 +1,11 @@
 import stripe
 import qrcode
 import time
+import json
 
-stripe.api_key = "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"
+
+with open("config.json", "r") as config_file:  # Open in read mode
+  stripe.api_key = json.load(config_file)["stripe"]["api_key"]  # Load data from the opened file
 
 product = stripe.Product.list().data[0]
 

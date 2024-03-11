@@ -1,6 +1,6 @@
 {
     "stripe":{
-        "api_key": "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"
+        "api_key": "sk_test_51Oq58aEOUgoZ3CskA9om3MDxReZyrlU9G9Y0JQLSL6GJqwjRreoufgVAptg27w9eBJPZY1eQnR3q11pssWyAkXa8008tDK3qVd"
     },
     "hardware":{
         "vending_slots": 5
