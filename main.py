@@ -14,6 +14,7 @@ from PyQt6.QtMultimedia import *
 from PyQt6.QtMultimediaWidgets import *
 from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
+from stripe import Product
 
 ##Example code for loading qr code supplied by coffee_payment.Stripe()
 #qim = ImageQt(your_qr_code)
@@ -140,8 +141,12 @@ class stackedExample(QWidget):
                                     }
                                     ''')
 
+        def product_selected(product: Product) -> None:
+            product_name_label.setText(product.name)
+
         self.product_slider = ProductSelection()
         self.product_slider.setProducts(self.payment_handler.getProducts(getConfig()["hardware"]["vending_slots"]))
+        self.product_slider.selected.connect(product_selected)
 
         def set_payment_view(show:bool=False) -> None:
             "When show is True, the payment qr code will slide into view"
@@ -250,6 +255,9 @@ class stackedExample(QWidget):
             self.product_slider.mouseReleaseEvent()
 
 class ProductSelection(QScrollArea):
+    # define a pyqt signal to be called when a product is selected
+    selected = pyqtSignal(Product)
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.setWidgetResizable(True)  # Allow resizing of scroll area content
@@ -280,7 +288,7 @@ class ProductSelection(QScrollArea):
     def getProductName(self) -> str:
         return self.products[self.current_product_index].name
 
-    def setProducts(self, products: list[Stripe]) -> None:
+    def setProducts(self, products: list[Product]) -> None:
         self.products = products
         self.product_widgets = []
 
@@ -363,6 +371,9 @@ class ProductSelection(QScrollArea):
 
             # Apply the effect to the widget
             self.product_widgets[index].setGraphicsEffect(opacity_effect)
+
+        # emit selected product
+        self.selected.emit(self.products[self.current_product_index])
 
 def main():
     app = QApplication(sys.argv)

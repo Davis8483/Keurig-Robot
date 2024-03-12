@@ -11,7 +11,7 @@ class Stripe():
         '''
         stripe.api_key = apiKey
 
-    def getProducts(self, numSlots: int) -> list:
+    def getProducts(self, numSlots: int) -> list[stripe.Product]:
         '''
         Returns a list of products pulled from stripe.
         All products must have the metadata of "vending_slot" to be set to an int.
