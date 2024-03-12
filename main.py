@@ -5,13 +5,13 @@ import time
 import urllib.request
 import json
 
-from PyQt6.QtGui import QPaintEvent, QResizeEvent
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
-from PyQt6.QtWidgets import *
+from PyQt6.QtMultimedia import *
+from PyQt6.QtMultimediaWidgets import *
 from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
 
@@ -19,12 +19,20 @@ from coffee_payment import Stripe
 #qim = ImageQt(your_qr_code)
 #pix = QPixmap.fromImage(qim
 
+def getConfig() -> dict:
+    "Returns the dictionary stored in config.json"
+
+    with open("config.json", "r") as config_file:  # Open in read mode
+        config = json.load(config_file)  # Load data from the opened file
+
+    return config
+
 class stackedExample(QWidget):
 
     def __init__(self):
         super(stackedExample, self).__init__()
 
-        self.payment_handler = Stripe(self.getConfig()["stripe"]["api_key"])
+        self.payment_handler = Stripe(getConfig()["stripe"]["api_key"])
             
         self.stack1 = QWidget()
         self.stack2 = QWidget()
@@ -41,6 +49,16 @@ class stackedExample(QWidget):
         self.showFullScreen()
         self.show()
 
+
+    def getConfig(self) -> dict:
+
+        "Returns the dictionary stored in config.json"
+        with open("config.json", "r") as config_file:  # Open in read mode
+            config = json.load(config_file)  # Load data from the opened file
+
+        return config
+        
+        
     def getConfig(self) -> dict:
 
         "Returns the dictionary stored in config.json"
@@ -77,7 +95,7 @@ class stackedExample(QWidget):
         sidebar_layout.addStretch()
 
         pay_qr_image = QLabel()
-        pay_qr_image.setPixmap(QPixmap('placeholder.jpg').scaledToHeight(400))
+        pay_qr_image.setPixmap(QPixmap('assets/placeholder.jpg').scaledToHeight(400))
         pay_qr_image.hide()
         sidebar_layout.addWidget(pay_qr_image)
         sidebar_layout.addStretch()
@@ -114,21 +132,16 @@ class stackedExample(QWidget):
         sidebar_layout.addWidget(pay_button)
 
         # use a widget to store the sidebar layout so we can set a styelsheet
-        sidebar_widget = QWidget()
-        sidebar_widget.setLayout(sidebar_layout)
-        sidebar_widget.setStyleSheet('''
+        self.sidebar_widget = QWidget()
+        self.sidebar_widget.setLayout(sidebar_layout)
+        self.sidebar_widget.setStyleSheet('''
                                     QWidget{
                                         background: #202020;
                                     }
                                     ''')
 
-        product_slider = ProductSelection()
-        product_slider.setProducts(self.payment_handler.getProducts(self.getConfig()["hardware"]["vending_slots"]))
-        # product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # product_slider.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        product_slider.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        product_slider.setFrameShape(QFrame.Shape.NoFrame)
-        # product_slider.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.product_slider = ProductSelection()
+        self.product_slider.setProducts(self.payment_handler.getProducts(getConfig()["hardware"]["vending_slots"]))
 
         def set_payment_view(show:bool=False) -> None:
             "When show is True, the payment qr code will slide into view"
@@ -138,7 +151,7 @@ class stackedExample(QWidget):
 
             if show:
                 # save the product section width so we can revert back to this later
-                self.product_shown_width = product_slider.width()
+                self.product_shown_width = self.product_slider.width()
             
             else:
                 pay_qr_image.hide()
@@ -148,10 +161,10 @@ class stackedExample(QWidget):
                 increment = int(0.005 * (self.product_view_x ** 2))
 
                 if show:
-                    new_width = product_slider.width() - increment
+                    new_width = self.product_slider.width() - increment
                     if new_width <= 0:
                         # we're close enough, jump to the end
-                        product_slider.setFixedWidth(0)
+                        self.product_slider.setFixedWidth(0)
 
                         # stop the animation event timer
                         self.timer.stop()
@@ -177,12 +190,12 @@ class stackedExample(QWidget):
                         pay_qr_image.show()
                     
                     else:
-                        product_slider.setFixedWidth(new_width)
+                        self.product_slider.setFixedWidth(new_width)
                 else:
-                    new_width = product_slider.width() + increment
+                    new_width = self.product_slider.width() + increment
                     if new_width >= self.product_shown_width:
                         # we're close enough, jump to the end
-                        product_slider.setFixedWidth(self.product_shown_width)
+                        self.product_slider.setFixedWidth(self.product_shown_width)
 
                         # stop the animation event timer
                         self.timer.stop()
@@ -207,7 +220,7 @@ class stackedExample(QWidget):
                                                 ''')
                     
                     else:
-                        product_slider.setFixedWidth(new_width)
+                        self.product_slider.setFixedWidth(new_width)
 
 
                 self.product_view_x += 1
@@ -220,8 +233,8 @@ class stackedExample(QWidget):
         
         pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
 
-        layout.addWidget(product_slider)
-        layout.addWidget(sidebar_widget)
+        layout.addWidget(self.product_slider)
+        layout.addWidget(self.sidebar_widget)
         
         self.stack2.setLayout(layout)
 
@@ -233,6 +246,9 @@ class stackedExample(QWidget):
         if self.Stack.currentWidget() == self.stack1:
             self.Stack.setCurrentWidget(self.stack2)
 
+            # make sure a product is centered in the scroll area
+            self.product_slider.mouseReleaseEvent()
+
 class ProductSelection(QScrollArea):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -243,11 +259,23 @@ class ProductSelection(QScrollArea):
         self.product_image_size = 500
         self.product_layout = QHBoxLayout()
         self.product_layout.setSpacing(self.product_image_spacing)
-
+        
         self.scroll_widget = QWidget()
         self.scroll_widget.setLayout(self.product_layout)
+        self.scroll_widget.setStyleSheet('''QWidget{
+                                            background-color: #c9c9c5;
+                                         }''')
 
         self.setWidget(self.scroll_widget)
+
+        # hide horizontal scroll bar while maintaining scroll functionality
+        self.horizontalScrollBar().setStyleSheet("height: 1px;")
+
+        # disable vertical scroll bar
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
+        # disable frame
+        self.setFrameShape(QFrame.Shape.NoFrame)
 
     def getProductName(self) -> str:
         return self.products[self.current_product_index].name
@@ -262,7 +290,7 @@ class ProductSelection(QScrollArea):
 
             # set to placeholder if image isn't found
             if len(index.images) == 0:
-                pixmap = QPixmap('placeholder.jpg')
+                pixmap = QPixmap(getConfig()["assets"]["placeholder_image"]["path"])
             
             else:
                 # load image from url specified on stripe product page
@@ -288,12 +316,17 @@ class ProductSelection(QScrollArea):
             self.verticalScrollBar().setValue(self.verticalScrollBar().value() - delta.y())
             self.last_drag_pos = event.pos()
 
-    def resizeEvent(self, a0: QResizeEvent | None) -> None:
+    def resizeEvent(self, event: QResizeEvent | None) -> None:
+        
+        # # slide products quickly to the left out of view
+        # new_width = event.size().width()
+        # old_width = event.oldSize().width()
+        # scroll_position = self.horizontalScrollBar().sliderPosition()
+
+        # self.horizontalScrollBar().setSliderPosition(scroll_position + (old_width - new_width))
+
         # set content margins so that products can be scrolled completely out of view
         self.product_layout.setContentsMargins(self.width(), 0, self.width(), 0)
-
-        # center on first product
-        self.mouseReleaseEvent()
 
     def mouseReleaseEvent(self, *kwargs) -> None:
         """Centers the slider on the closest widget when the user releases it."""

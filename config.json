@@ -4,5 +4,10 @@
     },
     "hardware":{
         "vending_slots": 5
+    },
+    "assets":{
+        "placeholder_image":{
+            "path": "assets/placeholder.jpg"
+        }
     }
 }
