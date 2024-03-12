@@ -285,9 +285,6 @@ class ProductSelection(QScrollArea):
         # disable frame
         self.setFrameShape(QFrame.Shape.NoFrame)
 
-    def getProductName(self) -> str:
-        return self.products[self.current_product_index].name
-
     def setProducts(self, products: list[Product]) -> None:
         self.products = products
         self.product_widgets = []
@@ -349,9 +346,21 @@ class ProductSelection(QScrollArea):
 
         # Find the closest snap position based on current slider position
         closest_snap_pos = min(snap_positions, key=lambda pos: abs(pos - slider_pos))
+        
+        def timer_callback():
+            new_pos = int((self.horizontalScrollBar().sliderPosition() - closest_snap_pos) / 10)
 
-        # Set slider position to the closest snap position
-        self.horizontalScrollBar().setSliderPosition(int(closest_snap_pos))
+            if new_pos == 0:
+                self.timer.stop()
+
+            else:
+                # ease slider to the closest snap position
+                self.horizontalScrollBar().setSliderPosition(self.horizontalScrollBar().sliderPosition() - new_pos)
+
+        # animate sliding to the product
+        self.timer = QTimer()
+        self.timer.timeout.connect(timer_callback)
+        self.timer.start()
 
         # Clear last drag position (optional for potential future use)
         self.last_drag_pos = None
