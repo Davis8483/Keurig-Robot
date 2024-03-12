@@ -50,37 +50,46 @@ class stackedExample(QWidget):
         self.showFullScreen()
         self.show()
 
-
-    def getConfig(self) -> dict:
-
-        "Returns the dictionary stored in config.json"
-        with open("config.json", "r") as config_file:  # Open in read mode
-            config = json.load(config_file)  # Load data from the opened file
-
-        return config
-        
-        
-    def getConfig(self) -> dict:
-
-        "Returns the dictionary stored in config.json"
-        with open("config.json", "r") as config_file:  # Open in read mode
-            config = json.load(config_file)  # Load data from the opened file
-
-        return config
         
     def stack1UI(self):
  
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        
+        video_widget = QVideoWidget()
+
+        # create background video
+        self.player = QMediaPlayer()
+        self.player.setSource(QUrl.fromLocalFile(getConfig()["assets"]["start_menu_video"]["path"]))
+        self.player.setVideoOutput(video_widget)
+        video_widget.setAspectRatioMode(Qt.AspectRatioMode.KeepAspectRatioByExpanding)
+
+        # enable autoplay and looping
+        self.player.play()
+        self.player.setLoops(-1)
 
         start_label = QLabel("Tap to start...")
-        start_label.setStyleSheet('''
-                                    font-size: 50px;
-                                    color: #091236;
-                                  ''')
+        start_label.setStyleSheet('''QLabel{
+                                        font-size: 40px;
+                                        font-weight: bold;
+                                        color: #ffffff;
+                                    }''')
+        
+        bar_layout = QVBoxLayout()
+        bar_layout.addWidget(start_label)
+        bar_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        layout.addWidget(start_label)
-        layout.setAlignment(Qt.AlignmentFlag.AlignAbsolute)
+        bottom_bar_widget = QWidget()
+        bottom_bar_widget.setLayout(bar_layout)
+        bottom_bar_widget.setFixedHeight(100)
+        bottom_bar_widget.setStyleSheet('''QWidget{
+                                                background: #202020;
+                                            }
+                                            ''')
 
+        layout.addWidget(video_widget)
+        layout.addWidget(bottom_bar_widget)
         self.stack1.setLayout(layout)
         
     def stack2UI(self):

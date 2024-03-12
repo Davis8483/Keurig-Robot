@@ -8,6 +8,9 @@
     "assets":{
         "placeholder_image":{
             "path": "assets/placeholder.jpg"
+        },
+        "start_menu_video":{
+            "path": "assets/blue and red gradient.mp4"
         }
     }
 }
