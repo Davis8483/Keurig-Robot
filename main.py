@@ -15,7 +15,7 @@ from PyQt6.QtMultimediaWidgets import *
 from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
 from stripe import Product
-
+import qrcode
 ##Example code for loading qr code supplied by coffee_payment.Stripe()
 #qim = ImageQt(your_qr_code)
 #pix = QPixmap.fromImage(qim
@@ -105,9 +105,10 @@ class stackedExample(QWidget):
         sidebar_layout.addStretch()
 
         pay_qr_image = QLabel()
-        pay_qr_image.setPixmap(QPixmap('assets/placeholder.jpg').scaledToHeight(400))
         pay_qr_image.hide()
+
         sidebar_layout.addWidget(pay_qr_image)
+
         sidebar_layout.addStretch()
 
         
@@ -149,9 +150,13 @@ class stackedExample(QWidget):
                                         background: #202020;
                                     }
                                     ''')
-
+        
+        self.selected_product = Product()
         def product_selected(product: Product) -> None:
+            # change item name
             product_name_label.setText(product.name)
+
+            self.selected_product = product
 
         self.product_slider = ProductSelection()
         self.product_slider.setProducts(self.payment_handler.getProducts(getConfig()["hardware"]["vending_slots"]))
@@ -160,7 +165,7 @@ class stackedExample(QWidget):
         def set_payment_view(show:bool=False) -> None:
             "When show is True, the payment qr code will slide into view"
 
-            # disable butotn
+            # disable button interactions
             pay_button.clicked.disconnect()
 
             if show:
@@ -168,8 +173,12 @@ class stackedExample(QWidget):
                 self.product_shown_width = self.product_slider.width()
             
             else:
+                # disable payment qr
                 pay_qr_image.hide()
-            
+
+                # disable payment link
+                self.payment_handler.disableLastPaymentLink()
+
             def timer_callback():
                 # use a porabola to ease the sliding animation
                 increment = int(0.005 * (self.product_view_x ** 2))
@@ -200,8 +209,28 @@ class stackedExample(QWidget):
                                                     border: none;
                                                     background: #de4747;
                                                 }
-                                                ''') 
+                                                ''')
+                        
+                        # set placeholder and show it
+                        pay_qr_image.setPixmap(QPixmap('assets/placeholder.jpg').scaledToHeight(400))
                         pay_qr_image.show()
+
+                        # load actual qr code, takes about a second
+                        def loadQR():
+                            qr = qrcode.QRCode(version=1,
+                                                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                                                border=0)
+                            qr.add_data(self.payment_handler.getPaymentLink(self.selected_product))
+                            qr.make(fit=True)
+
+                            qim = ImageQt(qr.make_image(fill_color="#ffffff", back_color="#202020"))
+                            pay_qr_image.setPixmap(QPixmap.fromImage(qim).scaledToHeight(400))
+                        
+                        # use a timer so animation finnishes before the blocking function, loadQR(), is called
+                        self.qr_timer = QTimer()
+                        self.qr_timer.timeout.connect(loadQR)
+                        self.qr_timer.setSingleShot(True)
+                        self.qr_timer.start(10)
                     
                     else:
                         self.product_slider.setFixedWidth(new_width)
@@ -360,7 +389,11 @@ class ProductSelection(QScrollArea):
             new_pos = int((self.horizontalScrollBar().sliderPosition() - closest_snap_pos) / 10)
 
             if new_pos == 0:
+                # stop animation
                 self.timer.stop()
+
+                # emit selected product
+                self.selected.emit(self.products[self.current_product_index])
 
             else:
                 # ease slider to the closest snap position
@@ -369,7 +402,7 @@ class ProductSelection(QScrollArea):
         # animate sliding to the product
         self.timer = QTimer()
         self.timer.timeout.connect(timer_callback)
-        self.timer.start()
+        self.timer.start(5)
 
         # Clear last drag position (optional for potential future use)
         self.last_drag_pos = None
@@ -389,9 +422,6 @@ class ProductSelection(QScrollArea):
 
             # Apply the effect to the widget
             self.product_widgets[index].setGraphicsEffect(opacity_effect)
-
-        # emit selected product
-        self.selected.emit(self.products[self.current_product_index])
 
 def main():
     app = QApplication(sys.argv)
