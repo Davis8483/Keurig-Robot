@@ -212,7 +212,7 @@ class stackedExample(QWidget):
                                                 ''')
                         
                         # set placeholder and show it
-                        pay_qr_image.setPixmap(QPixmap('assets/placeholder.jpg').scaledToHeight(400))
+                        pay_qr_image.setPixmap(QPixmap(getConfig()["assets"]["qr_placeholder_image"]["path"]).scaledToHeight(400))
                         pay_qr_image.show()
 
                         # load actual qr code, takes about a second

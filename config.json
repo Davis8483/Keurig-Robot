@@ -9,6 +9,9 @@
         "placeholder_image":{
             "path": "assets/placeholder.jpg"
         },
+        "qr_placeholder_image":{
+            "path": "assets/qr_placeholder.png"
+        },
         "start_menu_video":{
             "path": "assets/start.mp4"
         }
