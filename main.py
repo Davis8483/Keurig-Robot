@@ -28,6 +28,45 @@ def getConfig() -> dict:
 
     return config
 
+def getAssetPath(name:str) -> str:
+    '''
+    Returns the path of a specified asset stored in config.json
+
+    Parameters:
+        name - The name of the asset in config.json
+    '''
+
+    return getConfig()["ui"]["assets"][name]["path"]
+
+def getStylesheet(name:str, transformationName:str=None) -> str:
+    '''
+    Returns the stylesheet for the specified widget stored in config.json
+
+    Parameters:
+        name - The name of the stylesheet in config.json
+        transformationName - The trasformation to apply over the default stylesheet
+    '''
+    # load style for param:name
+    stylesheet:dict = getConfig()["ui"]["stylesheets"][name]
+
+    # applly transformation to default style
+    if (transformationName != None) and ("transformations" in stylesheet.keys()):
+
+        transformation:dict = stylesheet["transformations"][transformationName]
+
+        for style in transformation.keys():
+            stylesheet[style] = transformation[style]
+
+        # now delete transformation key
+        stylesheet.pop("transformations")
+
+    # format data into a string thats readable by the pyqt6
+    stylesheet_str = ""
+    for style in stylesheet.keys():
+        stylesheet_str += f"{style}: {stylesheet[style]};\n"
+
+    return stylesheet_str
+
 class stackedExample(QWidget):
 
     def __init__(self):
@@ -61,7 +100,7 @@ class stackedExample(QWidget):
 
         # create background video
         self.player = QMediaPlayer()
-        self.player.setSource(QUrl.fromLocalFile(getConfig()["assets"]["start_menu_video"]["path"]))
+        self.player.setSource(QUrl.fromLocalFile(getAssetPath("start_menu_video")))
         self.player.setVideoOutput(video_widget)
         video_widget.setAspectRatioMode(Qt.AspectRatioMode.KeepAspectRatioByExpanding)
 
@@ -70,11 +109,7 @@ class stackedExample(QWidget):
         self.player.setLoops(-1)
 
         start_label = QLabel("Tap to start...")
-        start_label.setStyleSheet('''QLabel{
-                                        font-size: 40px;
-                                        font-weight: bold;
-                                        color: #ffffff;
-                                    }''')
+        start_label.setStyleSheet(getStylesheet("start_label"))
         
         bar_layout = QVBoxLayout()
         bar_layout.addWidget(start_label)
@@ -83,10 +118,7 @@ class stackedExample(QWidget):
         bottom_bar_widget = QWidget()
         bottom_bar_widget.setLayout(bar_layout)
         bottom_bar_widget.setFixedHeight(100)
-        bottom_bar_widget.setStyleSheet('''QWidget{
-                                                background: #202020;
-                                            }
-                                            ''')
+        bottom_bar_widget.setStyleSheet(getStylesheet("bottom_bar_widget"))
 
         layout.addWidget(video_widget)
         layout.addWidget(bottom_bar_widget)
@@ -113,43 +145,19 @@ class stackedExample(QWidget):
 
         
         product_name_label = QLabel("Product Name")
-        product_name_label.setStyleSheet('''
-                                        QLabel{
-                                        font-size: 25px;
-                                        font-weight: bold;
-                                        color: #ffffff;
-                                        }
-                                        ''')
+        product_name_label.setStyleSheet(getStylesheet("product_name_label"))
         
         sidebar_layout.addWidget(product_name_label, 0, Qt.AlignmentFlag.AlignCenter)
 
         pay_button = QPushButton("Pay")
-        pay_button.setStyleSheet('''
-                                QPushButton{
-                                    font-size: 25px;
-                                    width: 300px;
-                                    height: 60px;
-                                    color: #ffffff;
-                                    padding: 5px 10px;
-                                    font-weight: bold;
-                                    position: relative;
-                                    outline: none;
-                                    border-radius: 20px;
-                                    border: none;
-                                    background: #476ade;
-                                }
-                                ''')
+        pay_button.setStyleSheet(getStylesheet("pay_button", transformationName="pay"))
 
         sidebar_layout.addWidget(pay_button)
 
         # use a widget to store the sidebar layout so we can set a styelsheet
         self.sidebar_widget = QWidget()
         self.sidebar_widget.setLayout(sidebar_layout)
-        self.sidebar_widget.setStyleSheet('''
-                                    QWidget{
-                                        background: #202020;
-                                    }
-                                    ''')
+        self.sidebar_widget.setStyleSheet(getStylesheet("sidebar_widget"))
         
         self.selected_product = Product()
         def product_selected(product: Product) -> None:
@@ -195,24 +203,10 @@ class stackedExample(QWidget):
                         # change button properties
                         pay_button.clicked.connect(lambda *_: set_payment_view(show=False))
                         pay_button.setText("Back")
-                        pay_button.setStyleSheet('''
-                                                QPushButton{
-                                                    font-size: 25px;
-                                                    width: 300px;
-                                                    height: 60px;
-                                                    color: #ffffff;
-                                                    padding: 5px 10px;
-                                                    font-weight: bold;
-                                                    position: relative;
-                                                    outline: none;
-                                                    border-radius: 20px;
-                                                    border: none;
-                                                    background: #de4747;
-                                                }
-                                                ''')
+                        pay_button.setStyleSheet(getStylesheet("pay_button", transformationName="back"))
                         
                         # set placeholder and show it
-                        pay_qr_image.setPixmap(QPixmap(getConfig()["assets"]["qr_placeholder_image"]["path"]).scaledToHeight(400))
+                        pay_qr_image.setPixmap(QPixmap(getAssetPath("qr_placeholder_image")).scaledToHeight(400))
                         pay_qr_image.show()
 
                         # load actual qr code, takes about a second
@@ -246,21 +240,7 @@ class stackedExample(QWidget):
                         # change button properties
                         pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
                         pay_button.setText("Pay")
-                        pay_button.setStyleSheet('''
-                                                QPushButton{
-                                                    font-size: 25px;
-                                                    width: 300px;
-                                                    height: 60px;
-                                                    color: #ffffff;
-                                                    padding: 5px 10px;
-                                                    font-weight: bold;
-                                                    position: relative;
-                                                    outline: none;
-                                                    border-radius: 20px;
-                                                    border: none;
-                                                    background: #476ade;
-                                                }
-                                                ''')
+                        pay_button.setStyleSheet(getStylesheet("pay_button", transformationName="pay"))
                     
                     else:
                         self.product_slider.setFixedWidth(new_width)
@@ -308,9 +288,7 @@ class ProductSelection(QScrollArea):
         
         self.scroll_widget = QWidget()
         self.scroll_widget.setLayout(self.product_layout)
-        self.scroll_widget.setStyleSheet('''QWidget{
-                                            background-color: #c9c9c5;
-                                         }''')
+        self.scroll_widget.setStyleSheet(getStylesheet("scroll_widget"))
 
         self.setWidget(self.scroll_widget)
 
@@ -333,7 +311,7 @@ class ProductSelection(QScrollArea):
 
             # set to placeholder if image isn't found
             if len(index.images) == 0:
-                pixmap = QPixmap(getConfig()["assets"]["placeholder_image"]["path"])
+                pixmap = QPixmap(getAssetPath("placeholder_image"))
             
             else:
                 # load image from url specified on stripe product page

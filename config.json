@@ -5,15 +5,58 @@
     "hardware":{
         "vending_slots": 5
     },
-    "assets":{
-        "placeholder_image":{
-            "path": "assets/placeholder.jpg"
+    "ui":{
+        "stylesheets":{
+            "start_label": {
+                "font-size": "40px",
+                "font-weight": "bold",
+                "color": "#ffffff"
+            },
+            "bottom_bar_widget": {
+                "background": "#202020"
+            },
+            "product_name_label": {
+                "font-size": "25px",
+                "font-weight": "bold",
+                "color": "#ffffff"
+            },
+            "pay_button": {
+                "font-size": "25px",
+                "width": "300px",
+                "height": "60px",
+                "color": "#ffffff",
+                "padding": "5px 10px",
+                "font-weight": "bold",
+                "position": "relative",
+                "outline": "none",
+                "border-radius": "20px",
+                "border": "none",
+                "transformations": {
+                    "pay": {
+                        "background": "#476ade"
+                    },
+                    "back": {
+                        "background": "#de4747"
+                    }
+                }
+            },
+            "sidebar_widget": {
+                "background": "#202020"
+            },
+            "scroll_widget": {
+                "background-color": "#c9c9c5"
+            }
         },
-        "qr_placeholder_image":{
-            "path": "assets/qr_placeholder.png"
-        },
-        "start_menu_video":{
-            "path": "assets/start.mp4"
+        "assets":{
+            "placeholder_image":{
+                "path": "assets/placeholder.jpg"
+            },
+            "qr_placeholder_image":{
+                "path": "assets/qr_placeholder.png"
+            },
+            "start_menu_video":{
+                "path": "assets/start.mp4"
+            }
         }
     }
 }
