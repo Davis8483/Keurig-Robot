@@ -16,9 +16,6 @@ from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
 from stripe import Product
 import qrcode
-##Example code for loading qr code supplied by coffee_payment.Stripe()
-#qim = ImageQt(your_qr_code)
-#pix = QPixmap.fromImage(qim
 
 def getConfig() -> dict:
     "Returns the dictionary stored in config.json"
@@ -161,10 +158,22 @@ class stackedExample(QWidget):
         
         self.selected_product = Product()
         def product_selected(product: Product) -> None:
-            # change item name
-            product_name_label.setText(product.name)
-
             self.selected_product = product
+
+            # change item name
+            product_name_label.setText(self.selected_product.name)
+
+            # check if product is in stock
+            if self.selected_product.active:
+                pay_button.setText("Pay")
+                pay_button.setStyleSheet(getStylesheet("pay_button", transformationName="pay"))
+                pay_button.setDisabled(False)
+            
+            else:
+                pay_button.setText("Out of Stock")
+                pay_button.setStyleSheet(getStylesheet("pay_button", transformationName="out_of_stock"))
+                pay_button.setDisabled(True)
+
 
         self.product_slider = ProductSelection()
         self.product_slider.setProducts(self.payment_handler.getProducts(getConfig()["hardware"]["vending_slots"]))
@@ -267,6 +276,10 @@ class stackedExample(QWidget):
 
     def mouseReleaseEvent(self, a0: QMouseEvent | None) -> None:
         if self.Stack.currentWidget() == self.stack1:
+            
+            # update products from the stripe API
+            self.product_slider.refreshProducts()
+
             self.Stack.setCurrentWidget(self.stack2)
 
             # make sure a product is centered in the scroll area
@@ -302,6 +315,13 @@ class ProductSelection(QScrollArea):
         self.setFrameShape(QFrame.Shape.NoFrame)
 
     def setProducts(self, products: list[Product]) -> None:
+        '''
+        Sets products and loads their respective images from the Stripe api
+
+        Parameters:
+            products - A list of stripe products
+        '''
+
         self.products = products
         self.product_widgets = []
 
@@ -325,6 +345,15 @@ class ProductSelection(QScrollArea):
 
             self.product_layout.addWidget(new_widget)
             self.product_widgets.append(new_widget)
+
+    def refreshProducts(self) -> None:
+        '''
+        Refreshes the current products from the strip API
+        '''
+
+        # loop through all products and refresh them using the API
+        for product in self.products:
+            product.refresh()
 
     def mousePressEvent(self, event):
         if event.buttons() == Qt.MouseButton.LeftButton:

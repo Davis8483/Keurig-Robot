@@ -37,7 +37,10 @@
                     },
                     "back": {
                         "background": "#de4747"
-                    }
+                    },
+                    "out_of_stock": {
+                        "background": "#5c5c5c"
+                    }                    
                 }
             },
             "sidebar_widget": {
