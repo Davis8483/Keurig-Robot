@@ -21,13 +21,11 @@ class Stripe():
         start = time.time()
         # disable last payment link before creating a new one
         self.disableLastPaymentLink()
-        print(f"Payment link disabled in: {time.time()-start}")
         
         # create a new payment link
         self.payment_link = stripe.PaymentLink.create(restrictions={"completed_sessions": {"limit": 1}},
                                          line_items=[{"price": f"{product.default_price}", "quantity": 1}])
         
-        print(f"Payment link created in: {time.time()-start}")
         return self.payment_link.url
         
     def disableLastPaymentLink(self) -> None:
