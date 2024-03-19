@@ -64,31 +64,32 @@ def getStylesheet(name:str, transformationName:str=None) -> str:
 
     return stylesheet_str
 
-class stackedExample(QWidget):
+class coffeeUI(QWidget):
 
     def __init__(self):
-        super(stackedExample, self).__init__()
+        super(coffeeUI, self).__init__()
 
         self.payment_handler = Stripe(getConfig()["stripe"]["api_key"])
             
         self.stack1 = QWidget()
         self.stack2 = QWidget()
+        self.stack3 = QWidget()
             
-        self.stack1UI()
-        self.stack2UI()
+        self.makeStartUI(self.stack1)
+        self.makeProductsUI(self.stack2)
+        self.makeDispensingUI(self.stack3)
             
-        self.Stack = QStackedLayout (self)
-        self.Stack.addWidget (self.stack1)
-        self.Stack.addWidget (self.stack2)
+        self.Stack = QStackedLayout(self)
+        self.Stack.addWidget(self.stack1)
+        self.Stack.addWidget(self.stack2)
+        self.Stack.addWidget(self.stack3)
 
         self.setLayout(self.Stack)
         self.setWindowTitle('StackedWidget demo')
         self.showFullScreen()
         self.show()
 
-        
-    def stack1UI(self):
- 
+    def makeStartUI(self, widget:QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -119,9 +120,11 @@ class stackedExample(QWidget):
 
         layout.addWidget(video_widget)
         layout.addWidget(bottom_bar_widget)
-        self.stack1.setLayout(layout)
+
+        widget.setLayout(layout)
         
-    def stack2UI(self):
+    def makeProductsUI(self, widget:QWidget):
+
         layout = QHBoxLayout()
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -195,8 +198,37 @@ class stackedExample(QWidget):
 
                 # disable payment link
                 self.payment_handler.disableLastPaymentLink()
+            
+            # continualy checks if payment is complete, then redirects to next screen
+            def poll_payment():
+                if self.payment_handler.isPaymentComplete():
+                    # hide the payment view for next transaction
+                    set_payment_view(show=False)
 
-            def timer_callback():
+                    # use a timer to allow payment view to finnish hiding before showing next stack item
+                    def payment_complete():
+                        self.Stack.setCurrentWidget(self.stack3)
+
+                    self.complete_timer = QTimer()
+                    self.complete_timer.timeout.connect(payment_complete)
+                    self.complete_timer.setSingleShot(True)
+                    self.complete_timer.start()
+
+                    # return back to start menu after 5 seconds
+                    def return_to_start():
+                        self.Stack.setCurrentWidget(self.stack1)
+
+                    self.return_timer = QTimer()
+                    self.return_timer.timeout.connect(return_to_start)
+                    self.return_timer.setSingleShot(True)
+                    self.return_timer.start(5000)
+
+                    self.payment_timer.stop()
+
+            self.payment_timer = QTimer()
+            self.payment_timer.timeout.connect(poll_payment)
+
+            def animate_sidebar():
                 # use a porabola to ease the sliding animation
                 increment = int(0.005 * (self.product_view_x ** 2))
 
@@ -207,7 +239,10 @@ class stackedExample(QWidget):
                         self.product_slider.setFixedWidth(0)
 
                         # stop the animation event timer
-                        self.timer.stop()
+                        self.sidebar_timer.stop()
+
+                        # listen for payment
+                        self.payment_timer.start(1000)
 
                         # change button properties
                         pay_button.clicked.connect(lambda *_: set_payment_view(show=False))
@@ -244,7 +279,10 @@ class stackedExample(QWidget):
                         self.product_slider.setFixedWidth(self.product_shown_width)
 
                         # stop the animation event timer
-                        self.timer.stop()
+                        self.sidebar_timer.stop()
+                        
+                        # stop listening for payment
+                        self.payment_timer.stop()
 
                         # change button properties
                         pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
@@ -257,18 +295,28 @@ class stackedExample(QWidget):
 
                 self.product_view_x += 1
 
-            self.timer=QTimer()
-            self.timer.timeout.connect(timer_callback)
+            self.sidebar_timer=QTimer()
+            self.sidebar_timer.timeout.connect(animate_sidebar)
 
             self.product_view_x = 0
-            self.timer.start(5)
+            self.sidebar_timer.start(5)
         
         pay_button.clicked.connect(lambda *_: set_payment_view(show=True))
 
         layout.addWidget(self.product_slider)
         layout.addWidget(self.sidebar_widget)
         
-        self.stack2.setLayout(layout)
+        widget.setLayout(layout)
+
+    def makeDispensingUI(self, widget:QWidget):
+        layout = QVBoxLayout()
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        successful_label = QLabel("Payment successful...")
+        successful_label.setStyleSheet(getStylesheet("successful_label"))
+        layout.addWidget(successful_label)
+
+        widget.setLayout(layout)
 
     def keyPressEvent(self, e):  
         if e.key() == Qt.Key.Key_Escape:
@@ -283,7 +331,7 @@ class stackedExample(QWidget):
             self.Stack.setCurrentWidget(self.stack2)
 
             # make sure a product is centered in the scroll area
-            self.product_slider.mouseReleaseEvent()
+            self.product_slider.setCurrentProduct(0)
 
 class ProductSelection(QScrollArea):
     # define a pyqt signal to be called when a product is selected
@@ -377,6 +425,53 @@ class ProductSelection(QScrollArea):
 
         # set content margins so that products can be scrolled completely out of view
         self.product_layout.setContentsMargins(self.width(), 0, self.width(), 0)
+    
+    def setFocusedProduct(self, index:int) -> None:
+        "Greys out all products besides the on at the specified index"
+
+        # set grayed out item images
+        for i in range(len(self.products)):
+
+            opacity_effect = QGraphicsOpacityEffect()
+
+            if i == index:
+                # Create the opacity effect
+                opacity_effect.setOpacity(1.0)  # Set desired opacity (0.0 - fully transparent, 1.0 - opaque)
+
+            else:
+                opacity_effect.setOpacity(0.3)
+
+            # Apply the effect to the widget
+            self.product_widgets[i].setGraphicsEffect(opacity_effect)
+
+    def setCurrentProduct(self, index:int) -> None:
+        "Scrolls the product slider to the specified product index"
+
+        widget_spacing = self.product_image_size + self.product_image_spacing
+
+        # Calculate potential snap positions (centers of each widget)
+        snap_positions = [(i * widget_spacing) + ((self.width() + self.product_image_size) / 2) for i in range(len(self.products))]
+
+        def timer_callback():
+            new_pos = int((self.horizontalScrollBar().sliderPosition() - snap_positions[index]) / 10)
+
+            if new_pos == 0:
+                # stop animation
+                self.timer.stop()
+
+                # emit selected product
+                self.selected.emit(self.products[index])
+
+            else:
+                # ease slider to the closest snap position
+                self.horizontalScrollBar().setSliderPosition(self.horizontalScrollBar().sliderPosition() - new_pos)
+
+        # animate sliding to the product
+        self.timer = QTimer()
+        self.timer.timeout.connect(timer_callback)
+        self.timer.start(5)
+
+        self.setFocusedProduct(index)
 
     def mouseReleaseEvent(self, *kwargs) -> None:
         """Centers the slider on the closest widget when the user releases it."""
@@ -391,48 +486,17 @@ class ProductSelection(QScrollArea):
 
         # Find the closest snap position based on current slider position
         closest_snap_pos = min(snap_positions, key=lambda pos: abs(pos - slider_pos))
+
+        current_product_index = snap_positions.index(closest_snap_pos)
         
-        def timer_callback():
-            new_pos = int((self.horizontalScrollBar().sliderPosition() - closest_snap_pos) / 10)
-
-            if new_pos == 0:
-                # stop animation
-                self.timer.stop()
-
-                # emit selected product
-                self.selected.emit(self.products[self.current_product_index])
-
-            else:
-                # ease slider to the closest snap position
-                self.horizontalScrollBar().setSliderPosition(self.horizontalScrollBar().sliderPosition() - new_pos)
-
-        # animate sliding to the product
-        self.timer = QTimer()
-        self.timer.timeout.connect(timer_callback)
-        self.timer.start(5)
+        self.setCurrentProduct(current_product_index)
 
         # Clear last drag position (optional for potential future use)
         self.last_drag_pos = None
 
-        # set grayed out item images
-        self.current_product_index = snap_positions.index(closest_snap_pos)
-        for index in range(len(self.products)):
-
-            opacity_effect = QGraphicsOpacityEffect()
-
-            if index == self.current_product_index:
-                # Create the opacity effect
-                opacity_effect.setOpacity(1.0)  # Set desired opacity (0.0 - fully transparent, 1.0 - opaque)
-
-            else:
-                opacity_effect.setOpacity(0.3)
-
-            # Apply the effect to the widget
-            self.product_widgets[index].setGraphicsEffect(opacity_effect)
-
 def main():
     app = QApplication(sys.argv)
-    ex = stackedExample()
+    ex = coffeeUI()
     sys.exit(app.exec())
     
 if __name__ == '__main__':

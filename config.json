@@ -48,6 +48,9 @@
             },
             "scroll_widget": {
                 "background-color": "#c9c9c5"
+            },
+            "successful_label":{
+                "font-size": "25px"
             }
         },
         "assets":{
