@@ -1,11 +1,11 @@
 import stripe
 import qrcode
 import time
-import json
+import commentjson
 
 
-with open("config.json", "r") as config_file:  # Open in read mode
-  stripe.api_key = json.load(config_file)["stripe"]["api_key"]  # Load data from the opened file
+with open("config.jsonc", "r") as config_file:  # Open in read mode
+  stripe.api_key = commentjson.load(config_file)["stripe"]["api_key"]  # Load data from the opened file
 
 product = stripe.Product.list().data[0]
 

@@ -3,7 +3,6 @@ import sys
 import os
 import time
 import urllib.request
-import json
 
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
@@ -16,12 +15,13 @@ from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
 from stripe import Product
 import qrcode
+import commentjson
 
 def getConfig() -> dict:
     "Returns the dictionary stored in config.json"
 
-    with open("config.json", "r") as config_file:  # Open in read mode
-        config = json.load(config_file)  # Load data from the opened file
+    with open("config.jsonc", "r") as config_file:  # Open in read mode
+        config = commentjson.load(config_file)  # Load data from the opened file
 
     return config
 

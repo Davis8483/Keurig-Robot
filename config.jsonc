@@ -1,11 +1,14 @@
 {
     "stripe":{
+        // replace with your stripe api key, https://dashboard.stripe.com/apikeys
         "api_key": "sk_test_51Oq58aEOUgoZ3CskA9om3MDxReZyrlU9G9Y0JQLSL6GJqwjRreoufgVAptg27w9eBJPZY1eQnR3q11pssWyAkXa8008tDK3qVd"
     },
     "hardware":{
+        // the number of k-pod slots in your machine
         "vending_slots": 5
     },
     "ui":{
+        // alter the look of the interface to fit your branding, uses web css
         "stylesheets":{
             "start_label": {
                 "font-size": "40px",
@@ -21,6 +24,7 @@
                 "color": "#ffffff"
             },
             "pay_button": {
+                // the default style
                 "font-size": "25px",
                 "width": "300px",
                 "height": "60px",
@@ -31,6 +35,8 @@
                 "outline": "none",
                 "border-radius": "20px",
                 "border": "none",
+
+                // styles to apply on top of the default based on program state
                 "transformations": {
                     "pay": {
                         "background": "#476ade"
@@ -53,6 +59,9 @@
                 "font-size": "25px"
             }
         },
+
+        // the location of image and video assets used by the ui
+        // if type, Ex: image, is not respected. Crashes will occour...
         "assets":{
             "placeholder_image":{
                 "path": "assets/placeholder.jpg"

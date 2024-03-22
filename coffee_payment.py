@@ -1,6 +1,6 @@
 import stripe
 import time
-import json
+import commentjson
 
 class Stripe():
     def __init__(self, apiKey:str) -> None:
@@ -94,8 +94,8 @@ class Stripe():
 
 if __name__ == '__main__':
 
-    with open("config.json", "r") as config_file:  # Open in read mode
-        api_key = json.load(config_file)["stripe"]["api_key"]  # Load data from the opened file
+    with open("config.jsonc", "r") as config_file:  # Open in read mode
+        api_key = commentjson.load(config_file)["stripe"]["api_key"]  # Load data from the opened file
 
     payment_handler = Stripe(api_key)
 
