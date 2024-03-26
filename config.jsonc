@@ -3,6 +3,20 @@
         // replace with your stripe api key, https://dashboard.stripe.com/apikeys
         "api_key": "sk_test_51Oq58aEOUgoZ3CskA9om3MDxReZyrlU9G9Y0JQLSL6GJqwjRreoufgVAptg27w9eBJPZY1eQnR3q11pssWyAkXa8008tDK3qVd"
     },
+    "logging":{
+        // used to recieve error messages and out of stock notifications
+        // create your webhook, https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+        "discord_webhook_url": "https://discord.com/api/webhooks/1221861196081270815/3qP4qUEzg5vqC-79y7lk3k6P_JDyUSPb6XxMUrVLO3ly2WIR_e7tMZ4MtjWcaCi7MoXP",
+
+        // enable and disable specific notification messages
+        "notifications": {
+            "initialization": true,
+            "product_creation": true,
+            "price_creation": true,
+            "out_of_stock": true,
+            "purchase_successful": true
+        }
+    },
     "hardware":{
         // the number of k-pod slots in your machine
         "vending_slots": 5
@@ -56,6 +70,9 @@
                 "background-color": "#c9c9c5"
             },
             "successful_label":{
+                "font-size": "25px"
+            },
+            "error_label":{
                 "font-size": "25px"
             }
         },

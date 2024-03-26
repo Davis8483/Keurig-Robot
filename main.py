@@ -3,6 +3,7 @@ import sys
 import os
 import time
 import urllib.request
+import traceback
 
 subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
@@ -13,6 +14,7 @@ from PyQt6.QtMultimedia import *
 from PyQt6.QtMultimediaWidgets import *
 from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
+from coffee_logging import Notifications
 from stripe import Product
 import qrcode
 import commentjson
@@ -64,12 +66,16 @@ def getStylesheet(name:str, transformationName:str=None) -> str:
 
     return stylesheet_str
 
+# used to send error and status notifications through discord
+discord_logging = Notifications(url=getConfig()["logging"]["discord_webhook_url"],
+                                allowedNotifications=getConfig()["logging"]["notifications"])
+
 class coffeeUI(QWidget):
 
     def __init__(self):
         super(coffeeUI, self).__init__()
 
-        self.payment_handler = Stripe(getConfig()["stripe"]["api_key"])
+        self.payment_handler = Stripe(getConfig()["stripe"]["api_key"], discord_logging)
             
         self.stack1 = QWidget()
         self.stack2 = QWidget()
@@ -85,9 +91,10 @@ class coffeeUI(QWidget):
         self.Stack.addWidget(self.stack3)
 
         self.setLayout(self.Stack)
-        self.setWindowTitle('StackedWidget demo')
         self.showFullScreen()
         self.show()
+
+        discord_logging.initialized()
 
     def makeStartUI(self, widget:QWidget):
         layout = QVBoxLayout()
@@ -494,10 +501,53 @@ class ProductSelection(QScrollArea):
         # Clear last drag position (optional for potential future use)
         self.last_drag_pos = None
 
+def error_handler(etype, value, tb):
+    '''
+    Handles thrown exceptions
+    '''
+
+    error_msg = ''.join(traceback.format_exception(etype, value, tb))
+
+    # requires an internet connection
+    try:
+        # send an error message on discord
+        discord_logging.unexpectedError(error_msg)
+
+    except:
+        pass
+
+    # spawn a new instance of the progarm
+    process = QProcess()
+    process.startDetached("python", sys.argv)
+
+    # stop current instance
+    exit()
+
+def check_internet_connection() -> bool:
+    '''
+    Returns if the host device has an internet connection.
+    '''
+
+    try:
+        urllib.request.urlopen("https://google.com", timeout=5)
+        return True
+    
+    except:
+        return False
+
+
 def main():
+    sys.excepthook = error_handler  # redirect std error
+
+    # wait for internet connection
+    while not check_internet_connection():
+        print("no internet")
+        time.sleep(1)
+
+    # start application
     app = QApplication(sys.argv)
     ex = coffeeUI()
     sys.exit(app.exec())
-    
+
 if __name__ == '__main__':
     main()

@@ -1,13 +1,15 @@
 import stripe
 import time
 import commentjson
+from coffee_logging import Notifications
 
 class Stripe():
-    def __init__(self, apiKey:str) -> None:
+    def __init__(self, apiKey:str, logging:Notifications) -> None:
         '''
         Parameters:
             api_key - Your stripe api key, https://dashboard.stripe.com/apikeys
         '''
+        self.logging = logging
         stripe.api_key = apiKey
 
     def getPaymentLink(self, product: stripe.Product) -> str:
@@ -79,6 +81,10 @@ class Stripe():
                         stripe.Product.modify(product.id,
                                             default_price=price.id)
                         
+                        self.logging.priceCreated(product=product.name,
+                                                  slot=slot,
+                                                  price=0)
+                        
                     products_list.append(product)
                     break
 
@@ -88,6 +94,7 @@ class Stripe():
                                                 active=False,
                                                 metadata={"vending_slot":slot},
                                                 default_price_data={"currency": "usd", "unit_amount": 0})
+                self.logging.productCreated(slot)
                 products_list.append(product)
                 
         return products_list
