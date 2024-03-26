@@ -67,6 +67,18 @@ class Stripe():
             # cycle through products until a slot canidate is found
             for product in stripe.Product.list().data:
                 if "vending_slot" in product.metadata.keys() and product.metadata["vending_slot"] == str(slot):
+
+                    # check if item has a default price, if not set one
+                    if product.default_price == None:
+                        # create a placeholder price of $0.00
+                        price = stripe.Price.create(product=product.id,
+                                                    unit_amount=0,
+                                                    currency="usd")
+                        
+                        # set default as the placeholder
+                        stripe.Product.modify(product.id,
+                                            default_price=price.id)
+                        
                     products_list.append(product)
                     break
 
@@ -74,21 +86,9 @@ class Stripe():
             if (len(products_list) - 1) < slot:
                 product = stripe.Product.create(name=f"Slot {slot} Placeholder",
                                                 active=False,
-                                                metadata={"vending_slot":slot})
+                                                metadata={"vending_slot":slot},
+                                                default_price_data={"currency": "usd", "unit_amount": 0})
                 products_list.append(product)
-
-            # make sure all products have a default price
-            for product in products_list:
-                # no default price found, create a new one
-                if product.default_price == None:
-                    # create a placeholder price of $0.00
-                    price = stripe.Price.create(product=product.id,
-                                                unit_amount=0,
-                                                currency="usd")
-                    
-                    # set default as the placeholder
-                    stripe.Product.modify(product.id,
-                                        default_price=price.id)
                 
         return products_list
 
