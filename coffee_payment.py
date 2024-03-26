@@ -7,7 +7,7 @@ class Stripe():
     def __init__(self, apiKey:str, logging:Notifications) -> None:
         '''
         Parameters:
-            api_key - Your stripe api key, https://dashboard.stripe.com/apikeys
+            `api_key`: Your stripe api key, https://dashboard.stripe.com/apikeys
         '''
         self.logging = logging
         stripe.api_key = apiKey
@@ -18,7 +18,7 @@ class Stripe():
         If a default price does not exist then one will be created for $0.00
 
         Parameters:
-            product - The stripe product to generate a payment link for
+            `product`: The stripe product to generate a payment link for
         '''
         start = time.time()
         # disable last payment link before creating a new one
@@ -31,7 +31,9 @@ class Stripe():
         return self.payment_link.url
         
     def disableLastPaymentLink(self) -> None:
-        "Disables the last payment link that was created using getPaymentLink()"
+        '''
+        Disables the last payment link that was created using `getPaymentLink()`
+        '''
 
         # check if a payment link has been created yet
         if hasattr(self, "payment_link"):
@@ -40,7 +42,9 @@ class Stripe():
                                       active=False)
         
     def isPaymentComplete(self) -> bool:
-        "Returns a boolean indicating if the payment has been completed"
+        '''
+        Returns a boolean indicating if the payment has been completed
+        '''
                 
         # retrieve the last 10 events
         for event in stripe.Event.list(limit=20):
@@ -54,11 +58,11 @@ class Stripe():
     def getProducts(self, numSlots: int) -> list[stripe.Product]:
         '''
         Returns a list of products pulled from stripe.
-        All products must have the metadata of "vending_slot" to be set to an int.
+        All products must have the metadata of `vending_slot` to be set to an int.
         If the specified vending slot is not found, a new placholder product will be created.
 
         Parameters:
-            numSlots - The number of products to be fetched to populate your machines kpod slots
+            `numSlots`: The number of products to be fetched to populate your machines kpod slots
         '''
         
         products_list: list[stripe.Product] = []

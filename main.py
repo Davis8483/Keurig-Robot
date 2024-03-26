@@ -32,7 +32,7 @@ def getAssetPath(name:str) -> str:
     Returns the path of a specified asset stored in config.json
 
     Parameters:
-        name - The name of the asset in config.json
+        `name`: The name of the asset in config.json
     '''
 
     return getConfig()["ui"]["assets"][name]["path"]
@@ -42,8 +42,8 @@ def getStylesheet(name:str, transformationName:str=None) -> str:
     Returns the stylesheet for the specified widget stored in config.json
 
     Parameters:
-        name - The name of the stylesheet in config.json
-        transformationName - The trasformation to apply over the default stylesheet
+        `name`: The name of the stylesheet in config.json
+        `transformationName`: The trasformation name to apply over the default stylesheet
     '''
     # load style for param:name
     stylesheet:dict = getConfig()["ui"]["stylesheets"][name]
@@ -374,7 +374,7 @@ class ProductSelection(QScrollArea):
         Sets products and loads their respective images from the Stripe api
 
         Parameters:
-            products - A list of stripe products
+            `products`: A list of stripe products
         '''
 
         self.products = products
@@ -434,7 +434,12 @@ class ProductSelection(QScrollArea):
         self.product_layout.setContentsMargins(self.width(), 0, self.width(), 0)
     
     def setFocusedProduct(self, index:int) -> None:
-        "Greys out all products besides the on at the specified index"
+        '''
+        Greys out all products besides the one at the specified index
+        
+        Parameters:
+            `index`: The index to focus
+        '''
 
         # set grayed out item images
         for i in range(len(self.products)):
@@ -452,7 +457,12 @@ class ProductSelection(QScrollArea):
             self.product_widgets[i].setGraphicsEffect(opacity_effect)
 
     def setCurrentProduct(self, index:int) -> None:
-        "Scrolls the product slider to the specified product index"
+        '''
+        Scrolls the product slider to the specified product index
+        
+        Parameters:
+            `index`: The product index to center on
+        '''
 
         widget_spacing = self.product_image_size + self.product_image_spacing
 
@@ -481,7 +491,9 @@ class ProductSelection(QScrollArea):
         self.setFocusedProduct(index)
 
     def mouseReleaseEvent(self, *kwargs) -> None:
-        """Centers the slider on the closest widget when the user releases it."""
+        '''
+        Centers the slider on the closest widget when the user releases it
+        '''
 
         # Get slider position and widget size
         slider_pos = self.horizontalScrollBar().sliderPosition()
