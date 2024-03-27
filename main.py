@@ -14,7 +14,7 @@ from PyQt6.QtMultimedia import *
 from PyQt6.QtMultimediaWidgets import *
 from PIL.ImageQt import ImageQt
 from coffee_payment import Stripe
-from coffee_logging import Notifications
+from coffee_notifications import Notifications
 from stripe import Product
 import qrcode
 import commentjson

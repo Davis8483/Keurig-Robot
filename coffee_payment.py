@@ -1,7 +1,7 @@
 import stripe
 import time
 import commentjson
-from coffee_logging import Notifications
+from coffee_notifications import Notifications
 
 class Stripe():
     def __init__(self, apiKey:str, logging:Notifications) -> None:
