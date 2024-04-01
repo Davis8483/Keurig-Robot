@@ -1,6 +1,6 @@
 {
     "stripe":{
-        // replace withtripe api key, https://dashboard.stripe.com/apikeys
+        // replace with your stripe api key, https://dashboard.stripe.com/apikeys
         "api_key": "sk_test_51Oq58aEOUgoZ3CskA9om3MDxReZyrlU9G9Y0JQLSL6GJqwjRreoufgVAptg27w9eBJPZY1eQnR3q11pssWyAkXa8008tDK3qVd"
     },
     "logging":{
