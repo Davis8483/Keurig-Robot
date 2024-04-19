@@ -26,7 +26,8 @@ class Stripe():
         
         # create a new payment link
         self.payment_link = stripe.PaymentLink.create(restrictions={"completed_sessions": {"limit": 1}},
-                                         line_items=[{"price": f"{product.default_price}", "quantity": 1}])
+                                         line_items=[{"price": f"{product.default_price}", "quantity": 1}],
+                                         allow_promotion_codes=True)
         
         return self.payment_link.url
         
