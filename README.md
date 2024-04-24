@@ -1,1 +1,2 @@
-This branch is a result of developing the GUI before testing on actual hardware. It was discovered that pyqt6 has poor support on the Raspberry Pi platform so the codebase has been recreated using Flask and React JS.
+# 🚧WIP🚧
+Hello there, thank you for finding my project. K-BOT is still in early development so make sure to check back later for an official release and build guide!
