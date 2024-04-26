@@ -1,1 +1,1 @@
-This branch is a result of developing the GUI before testing on actual hardware. It was discovered that pyqt6 has poor support on the Raspberry Pi platform so the codebase has been recreated using Flask and React JS.
+This branch is a result of developing the GUI before testing on actual hardware. It was discovered that pyqt6 has poor support on the Raspberry Pi platform so the codebase has been recreated using FastAPI and React JS.
