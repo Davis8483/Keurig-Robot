@@ -1,5 +1,4 @@
 import stripe
-import time
 import commentjson
 from coffee_notifications import Notifications
 
@@ -20,7 +19,6 @@ class Stripe():
         Parameters:
             `product`: The stripe product to generate a payment link for
         '''
-        start = time.time()
         # disable last payment link before creating a new one
         self.disableLastPaymentLink()
         
@@ -55,6 +53,10 @@ class Stripe():
                 return True
             
         return False
+    
+    def getPrice(self, priceID: str) -> float:
+        priceCents = stripe.Price.retrieve(priceID).unit_amount
+        return float(priceCents/100 or 0)
     
     def getProducts(self, numSlots: int) -> list[stripe.Product]:
         '''
