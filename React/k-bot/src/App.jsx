@@ -1,5 +1,6 @@
 import "./App.css";
 import StartScreen from "./Start";
+import MenuBar from "./Bar";
 import axios from "axios";
 
 function App() {
@@ -14,7 +15,8 @@ function App() {
 
   return (
     <div className="App">
-      <StartScreen />
+      <StartScreen name={"hello world"} />
+      <MenuBar />
     </div>
   );
 }
