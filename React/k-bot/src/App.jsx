@@ -2,6 +2,7 @@ import "./App.css";
 import StartScreen from "./Start";
 import MenuBar from "./Bar";
 import { useState } from "react";
+import { ReactComponent as Loading } from "./loading.svg";
 import axios from "axios";
 
 function App() {
@@ -14,17 +15,31 @@ function App() {
   //   console.log("WS Receives: ", data);
   // }
   const [barType, setBarType] = useState("BottomMenu");
-
+  const [barComponents, setBarComponents] = useState(<h1>Tap to start...</h1>);
   const handleClick = () => {
     setBarType("FullMenu"); // Update text on click
+    setBarComponents(<Loading className="Loading" />);
     console.log("clicked");
   };
   window.addEventListener("mouseup", handleClick);
+  window.addEventListener("keypress", (event) => {
+    setBarType("SideMenu");
+  });
+
+  function imagesLoaded(parentNode) {
+    const imgElements = parentNode.querySelectorAll("img");
+    for (const img of imgElements) {
+      if (!img.complete) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   return (
     <div className="App">
-      <StartScreen name={"hello world"} />
-      <MenuBar typeName={barType} />
+      <StartScreen />
+      <MenuBar permutation={barType}>{barComponents}</MenuBar>
     </div>
   );
 }
