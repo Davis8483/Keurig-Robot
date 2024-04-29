@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import StartScreen from "./Start";
+import axios from "axios";
 
 function App() {
+  // const newSocket = new WebSocket("ws://127.0.0.1:8000/ws");
+  // newSocket.onopen = () => console.log('WS Connected');
+  // newSocket.onclose = () => console.log('WS Disconnected');
+  // newSocket.onerror = (err) => console.log("WS Error");
+  // newSocket.onmessage = (e) => {
+  //   const data = JSON.parse(e.data);
+  //   console.log("WS Receives: ", data);
+  // }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <StartScreen />
     </div>
   );
 }
