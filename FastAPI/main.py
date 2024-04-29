@@ -9,7 +9,7 @@ from coffee_payment import Stripe
 from coffee_notifications import Notifications
 from stripe import Product
 import commentjson
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response, status, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from pydantic import BaseModel
@@ -41,7 +41,11 @@ payment_handler = Stripe(getConfig()["stripe"]["api_key"], discord_logging)
 
 
 # initialize api
-app = FastAPI()
+app = FastAPI(
+    title="K-Bot API",
+    description="Here you can find a list of methods utilized by React to interact with your Keurig Robot",
+    version="1.0.0"
+    )
 
 origins = [
     "https://localhost:3000"
@@ -52,7 +56,7 @@ app.add_middleware(
     allow_origins=origins
 )
 
-class Pod(BaseModel):
+class Kpod(BaseModel):
     id: str
     name: str
     description: str = ""
@@ -60,12 +64,12 @@ class Pod(BaseModel):
     image_url: str
 
 class VendingProducts(BaseModel):
-    products: List[Pod] = []
+    products: List[Kpod] = []
 
-@app.get("/products/", tags=["stripe"])
-async def root(response: Response) -> VendingProducts:
+@app.get("/products/", tags=["Stripe"])
+async def get_products(response: Response) -> VendingProducts:
     '''
-    Returns a list of k-pods that are being sold by your machine
+    Returns a list of Kpods that are being sold by your machine
     '''
 
     response.status_code = status.HTTP_418_IM_A_TEAPOT
@@ -77,7 +81,7 @@ async def root(response: Response) -> VendingProducts:
     for index in products:
 
         data.products.append(
-            Pod(
+            Kpod(
                 id=index.id,
                 name=index.name,
                 description=index.description or "",
@@ -88,12 +92,16 @@ async def root(response: Response) -> VendingProducts:
 
     return data
 
-class myData(BaseModel):
-    data: int = 0
+@app.websocket("/ws")
+async def websocket(websocket: WebSocket):
+    await websocket.accept()
 
-@app.post("/test/")
-async def test(a:int, b:str) -> myData:
-    return {"data": a*2}
+    websocket.receive_json
+
+    while True:
+        time.sleep(1)
+        await websocket.send_json({"data": "hello world, from my websocket"})
+
 
 if __name__ == '__main__':
     discord_logging.initialized()
