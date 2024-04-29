@@ -1,6 +1,7 @@
 import "./App.css";
 import StartScreen from "./Start";
 import MenuBar from "./Bar";
+import { useState } from "react";
 import axios from "axios";
 
 function App() {
@@ -12,11 +13,18 @@ function App() {
   //   const data = JSON.parse(e.data);
   //   console.log("WS Receives: ", data);
   // }
+  const [barType, setBarType] = useState("BottomMenu");
+
+  const handleClick = () => {
+    setBarType("FullMenu"); // Update text on click
+    console.log("clicked");
+  };
+  window.addEventListener("mouseup", handleClick);
 
   return (
     <div className="App">
       <StartScreen name={"hello world"} />
-      <MenuBar />
+      <MenuBar typeName={barType} />
     </div>
   );
 }
