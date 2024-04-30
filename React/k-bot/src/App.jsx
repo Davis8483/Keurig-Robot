@@ -14,15 +14,19 @@ function App() {
   const handleClick = () => {
     setBarType("FullMenu"); // Update text on click
     setBarComponents(<Loading className="Loading" />);
-    console.log("clicked");
+    setInterval(() => {
+      setPageContents(<ProductSelection />);
+      setInterval(() => {
+        setBarType("SideMenu");
+        setInterval(() => {
+          setBarComponents();
+        }, 1000);
+      }, 1000);
+    }, 1000);
   };
 
   useEffect(() => {
     window.addEventListener("mouseup", handleClick);
-    window.addEventListener("keypress", (event) => {
-      setPageContents(<ProductSelection />);
-      setBarType("SideMenu");
-    });
   }, []);
 
   function imagesLoaded(parentNode) {

@@ -3,6 +3,7 @@ import products_video from "./products_background.mp4";
 import title from "./title.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import { useState } from "react";
 
 export const StartScreen = () => {
   return (
@@ -16,6 +17,8 @@ export const StartScreen = () => {
 };
 
 export const ProductSelection = () => {
+  const [width, setWidth] = useState(window.innerWidth);
+
   return (
     <div className="Products">
       <video className="background-video" autoPlay loop muted>
@@ -27,7 +30,7 @@ export const ProductSelection = () => {
         onSwiper={(swiper) => console.log(swiper)}
         centeredSlides={true}
         className="swiper-container"
-        slidesOffsetBefore={-200}
+        slidesOffsetBefore={width * -0.15}
       >
         <SwiperSlide className="swiper-slide" proper>
           <img
