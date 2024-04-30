@@ -16,7 +16,7 @@ export const StartScreen = () => {
   );
 };
 
-export const ProductSelection = () => {
+export const ProductSelection = (props) => {
   const [width, setWidth] = useState(window.innerWidth);
 
   return (
@@ -27,10 +27,12 @@ export const ProductSelection = () => {
       <Swiper
         spaceBetween={0}
         slidesPerView={3}
-        onSwiper={(swiper) => console.log(swiper)}
         centeredSlides={true}
         className="swiper-container"
         slidesOffsetBefore={width * -0.15}
+        onSlideChange={(swiper) => {
+          props.onSelected(swiper.activeIndex);
+        }}
       >
         <SwiperSlide className="swiper-slide" proper>
           <img

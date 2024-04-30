@@ -104,12 +104,13 @@ h1 {
 }
 
 .swiper-slide * {
+  transition-duration: 0.5s;
   filter: opacity(0.6);
   transform: scale(0.7);
 }
 
 .swiper-slide-active * {
-  transition: all 500ms linear;
+  transition-duration: 0.5s;
   filter: opacity(1);
   transform: scale(1);
 }
