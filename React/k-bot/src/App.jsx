@@ -1,30 +1,29 @@
 import "./App.css";
-import StartScreen from "./Start";
+import { StartScreen, ProductSelection } from "./Pages";
 import MenuBar from "./Bar";
 import { useState } from "react";
 import { ReactComponent as Loading } from "./loading.svg";
 import axios from "axios";
+import { useEffect } from "react";
 
 function App() {
-  // const newSocket = new WebSocket("ws://127.0.0.1:8000/ws");
-  // newSocket.onopen = () => console.log('WS Connected');
-  // newSocket.onclose = () => console.log('WS Disconnected');
-  // newSocket.onerror = (err) => console.log("WS Error");
-  // newSocket.onmessage = (e) => {
-  //   const data = JSON.parse(e.data);
-  //   console.log("WS Receives: ", data);
-  // }
   const [barType, setBarType] = useState("BottomMenu");
   const [barComponents, setBarComponents] = useState(<h1>Tap to start...</h1>);
+  const [pageContents, setPageContents] = useState(<StartScreen />);
+
   const handleClick = () => {
     setBarType("FullMenu"); // Update text on click
     setBarComponents(<Loading className="Loading" />);
     console.log("clicked");
   };
-  window.addEventListener("mouseup", handleClick);
-  window.addEventListener("keypress", (event) => {
-    setBarType("SideMenu");
-  });
+
+  useEffect(() => {
+    window.addEventListener("mouseup", handleClick);
+    window.addEventListener("keypress", (event) => {
+      setPageContents(<ProductSelection />);
+      setBarType("SideMenu");
+    });
+  }, []);
 
   function imagesLoaded(parentNode) {
     const imgElements = parentNode.querySelectorAll("img");
@@ -38,7 +37,7 @@ function App() {
 
   return (
     <div className="App">
-      <StartScreen />
+      {pageContents}
       <MenuBar permutation={barType}>{barComponents}</MenuBar>
     </div>
   );
