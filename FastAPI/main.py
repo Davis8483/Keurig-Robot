@@ -63,24 +63,19 @@ class Kpod(BaseModel):
     price: float
     image_url: str
 
-class VendingProducts(BaseModel):
-    products: List[Kpod] = []
-
 @app.get("/products/", tags=["Stripe"])
-async def get_products(response: Response) -> VendingProducts:
+async def get_products() -> List[Kpod]:
     '''
     Returns a list of Kpods that are being sold by your machine
     '''
 
-    response.status_code = status.HTTP_418_IM_A_TEAPOT
-
     products: List[Product] = payment_handler.getProducts(getConfig()["hardware"]["vending_slots"])
 
-    data = VendingProducts()
+    data = []
 
     for index in products:
 
-        data.products.append(
+        data.append(
             Kpod(
                 id=index.id,
                 name=index.name,
@@ -91,17 +86,6 @@ async def get_products(response: Response) -> VendingProducts:
         )
 
     return data
-
-@app.websocket("/ws")
-async def websocket(websocket: WebSocket):
-    await websocket.accept()
-
-    websocket.receive_json
-
-    while True:
-        time.sleep(1)
-        await websocket.send_json({"data": "hello world, from my websocket"})
-
 
 if __name__ == '__main__':
     discord_logging.initialized()

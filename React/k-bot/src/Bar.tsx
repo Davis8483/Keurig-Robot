@@ -1,3 +1,5 @@
+import React from "react";
+
 const MenuBar = (props) => {
   var typeName = props.permutation || "BottomBar";
 

@@ -1,10 +1,9 @@
+import React from "react";
 import "./App.css";
-import { StartScreen, ProductSelection } from "./Pages";
-import MenuBar from "./Bar";
-import { useState } from "react";
+import { StartScreen, ProductSelection } from "./Pages.tsx";
+import MenuBar from "./Bar.tsx";
 import { ReactComponent as Loading } from "./loading.svg";
-import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import maximize_sound from "./maximize.ogg";
 import minimize_sound from "./minimize.ogg";
 import select_sound from "./select.ogg";
@@ -18,7 +17,7 @@ function App() {
   const select = new Audio(select_sound);
 
   const podSelected = (index) => {
-    const clone = select.cloneNode(true); // Create a copy of the audio element
+    const clone: HTMLAudioElement = select.cloneNode(true) as HTMLAudioElement; // Create a copy of the audio element
     clone.volume = 0.8;
     clone.play(); // Play the cloned element
   };
@@ -28,14 +27,18 @@ function App() {
     setBarType("FullMenu"); // Update text on click
     setBarComponents(<Loading className="Loading" />);
     setTimeout(() => {
-      setPageContents(<ProductSelection onSelected={podSelected} />);
-      setTimeout(() => {
-        minimize.play();
-        setBarType("SideMenu");
-        setTimeout(() => {
-          setBarComponents();
-        }, 1000);
-      }, 1000);
+      setPageContents(
+        <ProductSelection
+          onSelected={podSelected}
+          onLoad={() => {
+            minimize.play();
+            setBarType("SideMenu");
+            setTimeout(() => {
+              setBarComponents(<></>);
+            }, 1000);
+          }}
+        />
+      );
     }, 1000);
   };
 
