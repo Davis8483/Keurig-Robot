@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import maximize_sound from "./maximize.ogg";
 import minimize_sound from "./minimize.ogg";
 import select_sound from "./select.ogg";
+import { Kpod } from "./APImodels.tsx";
+import { getProducts } from "./APIfunctions.tsx";
 
 function App() {
   const [barType, setBarType] = useState("BottomMenu");
@@ -27,18 +29,21 @@ function App() {
     setBarType("FullMenu"); // Update text on click
     setBarComponents(<Loading className="Loading" />);
     setTimeout(() => {
+      // load page before hand to make sure video is rendered
       setPageContents(
-        <ProductSelection
-          onSelected={podSelected}
-          onLoad={() => {
-            minimize.play();
-            setBarType("SideMenu");
-            setTimeout(() => {
-              setBarComponents(<></>);
-            }, 1000);
-          }}
-        />
+        <ProductSelection onSelected={podSelected} products={[]} />
       );
+      // load the page with the products fetched from the api
+      getProducts((pods: Kpod[]) => {
+        setPageContents(
+          <ProductSelection onSelected={podSelected} products={pods} />
+        );
+        minimize.play();
+        setBarType("SideMenu");
+        setTimeout(() => {
+          setBarComponents(<></>);
+        }, 1000);
+      });
     }, 1000);
   };
 

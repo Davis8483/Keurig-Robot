@@ -6,7 +6,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { useState, useEffect } from "react";
 import { Kpod } from "./APImodels.tsx";
-import { getProducts } from "./APIfunctions.tsx";
 
 export const StartScreen = (props) => {
   return (
@@ -21,15 +20,7 @@ export const StartScreen = (props) => {
 
 export const ProductSelection = (props) => {
   const [width, setWidth] = useState(window.innerWidth);
-  const [products, setProducts] = useState([] as Kpod[]);
-
-  useEffect(() => {
-    console.log(products.length);
-    getProducts((pods: Kpod[]) => {
-      setProducts(pods);
-      props.onLoad();
-    });
-  }, []);
+  const pods: Kpod[] = props.products || [];
 
   return (
     <div className="Products">
@@ -46,7 +37,7 @@ export const ProductSelection = (props) => {
           props.onSelected(swiper.activeIndex);
         }}
       >
-        {products.map((data) => {
+        {pods.map((data) => {
           return (
             <SwiperSlide className="swiper-slide">
               <img className="swiper-img" alt="Kpod" src={data.image_url}></img>
