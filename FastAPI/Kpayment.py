@@ -1,6 +1,6 @@
 import stripe
 import commentjson
-from coffee_notifications import Notifications
+from Knotifications import Notifications
 
 class Stripe():
     def __init__(self, apiKey:str, logging:Notifications) -> None:

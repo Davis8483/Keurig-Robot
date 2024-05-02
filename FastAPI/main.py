@@ -5,8 +5,8 @@ import time
 import urllib.request
 import traceback
 
-from coffee_payment import Stripe
-from coffee_notifications import Notifications
+from Kpayment import Stripe
+from Knotifications import Notifications
 from stripe import Product
 import commentjson
 from fastapi import FastAPI, Response, status, WebSocket
@@ -18,7 +18,7 @@ from typing import List
 def getConfig() -> dict:
     "Returns the dictionary stored in config.json"
 
-    with open("config.jsonc", "r") as config_file:  # Open in read mode
+    with open("FastAPI/config.jsonc", "r") as config_file:  # Open in read mode
         config = commentjson.load(config_file)  # Load data from the opened file
 
     return config
