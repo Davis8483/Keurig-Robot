@@ -9,6 +9,11 @@ import minimize_sound from "./minimize.ogg";
 import select_sound from "./select.ogg";
 import { Kpod } from "./APImodels.tsx";
 import { getProducts } from "./APIfunctions.tsx";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 function App() {
   const [barType, setBarType] = useState("BottomMenu");
@@ -65,6 +70,7 @@ function App() {
     <div className="App">
       {pageContents}
       <MenuBar permutation={barType}>{barComponents}</MenuBar>
+      <NotificationContainer />
     </div>
   );
 }
