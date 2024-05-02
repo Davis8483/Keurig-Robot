@@ -105,7 +105,7 @@ h1 {
 
 .swiper-slide * {
   transition-duration: 0.5s;
-  filter: opacity(0.6);
+  filter: opacity(0.6) blur(3px);
   transform: scale(0.7);
 }
 

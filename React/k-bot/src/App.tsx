@@ -34,19 +34,18 @@ function App() {
     setBarType("FullMenu"); // Update text on click
     setBarComponents(<Loading className="Loading" />);
     setTimeout(() => {
-      // load page before hand to make sure video is rendered
-      setPageContents(
-        <ProductSelection onSelected={podSelected} products={[]} />
-      );
       // load the page with the products fetched from the api
       getProducts((pods: Kpod[]) => {
         setPageContents(
           <ProductSelection onSelected={podSelected} products={pods} />
         );
-        minimize.play();
-        setBarType("SideMenu");
+        // wait another half second for assets to load
         setTimeout(() => {
-          setBarComponents(<></>);
+          minimize.play();
+          setBarType("SideMenu");
+          setTimeout(() => {
+            setBarComponents(<></>);
+          }, 500);
         }, 1000);
       });
     }, 1000);
