@@ -1,5 +1,4 @@
 from discord_webhook import DiscordWebhook, DiscordEmbed
-import requests
 
 class Notifications():
     def __init__(self, url:str, allowedNotifications:dict) -> None:
@@ -62,6 +61,6 @@ class Notifications():
             `error`: the exception that was thrown
         '''
         embed = DiscordEmbed(title="💀  An Unkown Error Has Occoured",
-                            description=f"Please investigate this issue, the program will now restart automatically.\n```python\n{error}```")
+                            description=f"Please investigate this issue,\n```python\n{error}```")
         
         DiscordWebhook(url=self.url, embeds=[embed]).execute()

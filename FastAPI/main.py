@@ -87,6 +87,13 @@ async def get_products() -> List[Kpod]:
 
     return data
 
+@app.exception_handler(Exception)
+async def exception_notification(request: Request, exc: Exception):
+    exc_msg = traceback.format_exception(exc)
+
+    # only return last error paragraph
+    discord_logging.unexpectedError("".join(exc_msg[-5:]))
+
 if __name__ == '__main__':
     discord_logging.initialized()
     uvicorn.run("main:app", reload=True)
