@@ -1,94 +1,24 @@
 {
-    "stripe":{
-        // replace with your stripe api key, https://dashboard.stripe.com/apikeys
-        "api_key": "sk_test_51Oq58aEOUgoZ3CskA9om3MDxReZyrlU9G9Y0JQLSL6GJqwjRreoufgVAptg27w9eBJPZY1eQnR3q11pssWyAkXa8008tDK3qVd"
-    },
-    "logging":{
-        // used to recieve error messages and out of stock notifications
-        // create your webhook, https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
-        "discord_webhook_url": "https://discord.com/api/webhooks/1221861196081270815/3qP4qUEzg5vqC-79y7lk3k6P_JDyUSPb6XxMUrVLO3ly2WIR_e7tMZ4MtjWcaCi7MoXP",
+  "stripe": {
+    // replace with your stripe api key, https://dashboard.stripe.com/apikeys
+    "api_key": "sk_test_51Oq58aEOUgoZ3CskA9om3MDxReZyrlU9G9Y0JQLSL6GJqwjRreoufgVAptg27w9eBJPZY1eQnR3q11pssWyAkXa8008tDK3qVd"
+  },
+  "logging": {
+    // used to recieve error messages and out of stock notifications
+    // create your webhook, https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+    "discord_webhook_url": "https://discord.com/api/webhooks/1221861196081270815/3qP4qUEzg5vqC-79y7lk3k6P_JDyUSPb6XxMUrVLO3ly2WIR_e7tMZ4MtjWcaCi7MoXP",
 
-        // enable and disable specific notification messages
-        "notifications": {
-            "initialization": true,
-            "product_creation": true,
-            "price_creation": true,
-            "out_of_stock": true,
-            "purchase_successful": true
-        }
-    },
-    "hardware":{
-        // the number of k-pod slots in your machine
-        "vending_slots": 5
-    },
-    "ui":{
-        // alter the look of the interface to fit your branding, uses web css
-        "stylesheets":{
-            "start_label": {
-                "font-size": "40px",
-                "font-weight": "bold",
-                "color": "#ffffff"
-            },
-            "bottom_bar_widget": {
-                "background": "#202020"
-            },
-            "product_name_label": {
-                "font-size": "25px",
-                "font-weight": "bold",
-                "color": "#ffffff"
-            },
-            "pay_button": {
-                // the default style
-                "font-size": "25px",
-                "width": "300px",
-                "height": "60px",
-                "color": "#ffffff",
-                "padding": "5px 10px",
-                "font-weight": "bold",
-                "position": "relative",
-                "outline": "none",
-                "border-radius": "20px",
-                "border": "none",
-
-                // styles to apply on top of the default based on program state
-                "transformations": {
-                    "pay": {
-                        "background": "#476ade"
-                    },
-                    "back": {
-                        "background": "#de4747"
-                    },
-                    "out_of_stock": {
-                        "background": "#5c5c5c"
-                    }                    
-                }
-            },
-            "sidebar_widget": {
-                "background": "#202020"
-            },
-            "scroll_widget": {
-                "background-color": "#c9c9c5"
-            },
-            "successful_label":{
-                "font-size": "25px"
-            },
-            "error_label":{
-                "font-size": "25px"
-            }
-        },
-
-        // the location of image and video assets used by the ui
-        // if type, Ex: image, is not respected. Crashes will occour...
-        "assets":{
-            "placeholder_image":{
-                "path": "assets/placeholder.jpg"
-            },
-            "qr_placeholder_image":{
-                "path": "assets/qr_placeholder.png"
-            },
-            "start_menu_video":{
-                "path": "assets/start.mp4"
-            }
-        }
+    // enable and disable specific notification messages
+    "notifications": {
+      "initialization": true,
+      "product_creation": true,
+      "price_creation": true,
+      "out_of_stock": true,
+      "purchase_successful": true
     }
+  },
+  "hardware": {
+    // the number of k-pod slots in your machine
+    "vending_slots": 5
+  }
 }

@@ -1,15 +1,10 @@
-import subprocess
-import sys
-import os
-import time
-import urllib.request
 import traceback
 
 from Kpayment import Stripe
 from Knotifications import Notifications
 from stripe import Product
 import commentjson
-from fastapi import FastAPI, Response, status, WebSocket
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from pydantic import BaseModel
@@ -22,16 +17,6 @@ def getConfig() -> dict:
         config = commentjson.load(config_file)  # Load data from the opened file
 
     return config
-
-def getAssetPath(name:str) -> str:
-    '''
-    Returns the path of a specified asset stored in config.json
-
-    Parameters:
-        `name`: The name of the asset in config.json
-    '''
-
-    return getConfig()["ui"]["assets"][name]["path"]
 
 # used to send error and status notifications through discord
 discord_logging = Notifications(url=getConfig()["logging"]["discord_webhook_url"],
@@ -63,7 +48,7 @@ class Kpod(BaseModel):
     price: float
     image_url: str
 
-@app.get("/products/", tags=["Stripe"])
+@app.get("/products/", tags=["Products"])
 async def get_products() -> List[Kpod]:
     '''
     Returns a list of Kpods that are being sold by your machine
@@ -86,6 +71,13 @@ async def get_products() -> List[Kpod]:
         )
 
     return data
+
+@app.put("/products/select/", tags=["Products"])
+async def select_product(stripeID) -> str:
+    '''
+    Returns a stripe link used to purchase the specified product
+    '''
+    return payment_handler.getPaymentLink(stripeID)
 
 @app.exception_handler(Exception)
 async def exception_notification(request: Request, exc: Exception):

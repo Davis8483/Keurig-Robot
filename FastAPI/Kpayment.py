@@ -11,16 +11,19 @@ class Stripe():
         self.logging = logging
         stripe.api_key = apiKey
 
-    def getPaymentLink(self, product: stripe.Product) -> str:
+    def getPaymentLink(self, productID: str) -> str:
         '''
         Creates a payment link for the specified product using the default price.
         If a default price does not exist then one will be created for $0.00
 
         Parameters:
-            `product`: The stripe product to generate a payment link for
+            `productID`: The stripe product to generate a payment link for
         '''
         # disable last payment link before creating a new one
         self.disableLastPaymentLink()
+
+        # grab product from id
+        product = stripe.Product.retrieve(productID)
         
         # create a new payment link
         self.payment_link = stripe.PaymentLink.create(restrictions={"completed_sessions": {"limit": 1}},
