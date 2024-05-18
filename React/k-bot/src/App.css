@@ -71,6 +71,8 @@ h1 {
   bottom: 0;
   right: 0;
   transition-duration: 1s;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 }
 
 .FullMenu {
@@ -88,6 +90,8 @@ h1 {
   bottom: 0;
   right: 0;
   transition-duration: 1s;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
 }
 
 .Loading {
