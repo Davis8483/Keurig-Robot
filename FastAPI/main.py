@@ -33,11 +33,13 @@ app = FastAPI(
     )
 
 origins = [
-    "https://localhost:3000"
+    "http://localhost:3000"
 ]
 
 app.add_middleware(
     CORSMiddleware,
+    allow_methods=["*"],
+    allow_headers=["*"],
     allow_origins=origins
 )
 
@@ -47,6 +49,7 @@ class Kpod(BaseModel):
     description: str = ""
     price: float
     image_url: str
+    in_stock: bool
 
 @app.get("/products/", tags=["Products"])
 async def get_products() -> List[Kpod]:
@@ -59,14 +62,14 @@ async def get_products() -> List[Kpod]:
     data = []
 
     for index in products:
-
         data.append(
             Kpod(
                 id=index.id,
                 name=index.name,
                 description=index.description or "",
                 price=payment_handler.getPrice(index.default_price),
-                image_url=index.images[0]
+                image_url=index.images[0],
+                in_stock=index.active
             )
         )
 

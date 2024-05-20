@@ -118,3 +118,8 @@ h1 {
   filter: opacity(1);
   transform: scale(1);
 }
+
+#payment-qr-code {
+  width: 80%;
+  height: auto;
+}

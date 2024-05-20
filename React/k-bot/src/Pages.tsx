@@ -34,7 +34,16 @@ export const ProductSelection = (props) => {
         className="swiper-container"
         slidesOffsetBefore={width * -0.15}
         onSlideChange={(swiper) => {
-          props.onSelected(swiper.activeIndex);
+          props.onSelected(pods[swiper.activeIndex]);
+        }}
+        onInit={(swiper) => {
+          setTimeout(
+            (product) => {
+              props.onSelected(product, true);
+            },
+            1000,
+            pods[swiper.activeIndex]
+          );
         }}
       >
         {pods.map((data) => {
