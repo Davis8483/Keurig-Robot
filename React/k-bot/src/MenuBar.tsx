@@ -3,6 +3,7 @@ import QRCode from "react-qr-code";
 import { Kpod } from "./APImodels.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { ReactComponent as Loading } from "./loading.svg";
+import outOfStock from "./out_of_stock.png";
 
 export const MenuBarBase = (props) => {
   var typeName = props.permutation || "BottomBar";
@@ -14,7 +15,7 @@ export const MenuBarBase = (props) => {
   );
 };
 
-export const ProductInfo = (props) => {
+export const PaymentQR = (props) => {
   const product = props.product as Kpod;
 
   const pLink = useQuery({
@@ -32,6 +33,29 @@ export const ProductInfo = (props) => {
   });
 
   return (
+    <>
+      {pLink.isFetching ? (
+        <Loading className="Loading" />
+      ) : (
+        <div id="product_payment">
+          <div id="qr_label">Scan to Pay • ${product.price}</div>
+          <QRCode
+            id="payment-qr-code"
+            value={pLink.data}
+            bgColor={"transparent"}
+            fgColor="#ffffff"
+            size={500}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+export const ProductInfo = (props) => {
+  const product = props.product as Kpod;
+
+  return (
     <div className="ProductInfo">
       <div id="product_data">
         <text id="product_name">{product.name}</text>
@@ -42,18 +66,12 @@ export const ProductInfo = (props) => {
             : "No description."}
         </text>
       </div>
-      {pLink.isFetching ? (
-        <Loading className="Loading" />
+      {product.in_stock ? (
+        <PaymentQR product={product} />
       ) : (
         <div id="product_payment">
-          <div id="qr_label">Scan to Pay - ${product.price}</div>
-          <QRCode
-            id="payment-qr-code"
-            value={pLink.data}
-            bgColor={"transparent"}
-            fgColor="#ffffff"
-            size={500}
-          />
+          <img src={outOfStock} id="out_of_stock_image"></img>
+          <text id="out_of_stock_label">Out of Stock</text>
         </div>
       )}
     </div>

@@ -8,4 +8,5 @@ export class Kpod {
   description: string;
   price: number;
   image_url: string;
+  in_stock: boolean;
 }
