@@ -14,18 +14,3 @@ export function getProducts(callback: (products: Kpod[]) => void) {
       callback([] as Kpod[]);
     });
 }
-
-export function selectProduct(
-  prodID: string,
-  callback: (pLink: string) => void
-) {
-  axios
-    .put("/products/select", {}, { params: { stripeID: prodID } })
-    .then((response) => {
-      callback(response.data as string);
-    })
-    .catch((error) => {
-      // display error to use for 10 seconds
-      NotificationManager.error(`${error}`, "Failed to Select Product", 10000);
-    });
-}

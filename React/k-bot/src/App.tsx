@@ -8,14 +8,21 @@ import maximize_sound from "./maximize.ogg";
 import minimize_sound from "./minimize.ogg";
 import select_sound from "./select.ogg";
 import { Kpod } from "./APImodels.tsx";
-import { getProducts, selectProduct } from "./APIfunctions.tsx";
+import { getProducts } from "./APIfunctions.tsx";
 import {
   NotificationContainer,
   NotificationManager,
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 
 function App() {
+  const queryClient = new QueryClient();
+
   const [barType, setBarType] = useState("BottomMenu");
   const [barComponents, setBarComponents] = useState(<h1>Tap to start...</h1>);
   const [pageContents, setPageContents] = useState(<StartScreen />);
@@ -33,10 +40,7 @@ function App() {
       clone.play(); // Play the cloned element
     }
 
-    // get payment link
-    selectProduct(product.id, (pLink) => {
-      setBarComponents(<ProductInfo link={pLink} />);
-    });
+    setBarComponents(<ProductInfo product={product} randID={Math.random()} />);
   };
 
   const handleClick = () => {
@@ -75,9 +79,11 @@ function App() {
 
   return (
     <div className="App">
-      {pageContents}
-      <MenuBar permutation={barType}>{barComponents}</MenuBar>
-      <NotificationContainer />
+      <QueryClientProvider client={queryClient}>
+        {pageContents}
+        <MenuBar permutation={barType}>{barComponents}</MenuBar>
+        <NotificationContainer />
+      </QueryClientProvider>
     </div>
   );
 }

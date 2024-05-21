@@ -4,6 +4,7 @@
   "proxy": "http://127.0.0.1:8000/",
   "private": true,
   "dependencies": {
+    "@tanstack/react-query": "^5.37.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,6 +13,7 @@
     "react-dom": "^18.3.0",
     "react-notifications": "^1.7.4",
     "react-qr-code": "^2.0.13",
+    "react-query": "^3.39.3",
     "react-scripts": "5.0.1",
     "swiper": "^11.1.1",
     "web-vitals": "^2.1.4"
