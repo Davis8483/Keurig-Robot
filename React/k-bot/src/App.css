@@ -120,6 +120,28 @@ h1 {
 }
 
 #payment-qr-code {
-  width: 80%;
+  width: 100%;
   height: auto;
+}
+
+#product_payment {
+  margin: 10%;
+}
+
+.ProductInfo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#product_data {
+  margin: 10%;
+  text-wrap: wrap;
+}
+
+#product_name {
+  font-size: 2.5vw;
+  font-weight: bold;
 }

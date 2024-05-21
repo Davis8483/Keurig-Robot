@@ -33,17 +33,29 @@ export const ProductInfo = (props) => {
 
   return (
     <div className="ProductInfo">
-      {pLink.isFetching ? (
-        <Loading className="Loading" />
-      ) : (
-        <QRCode
-          id="payment-qr-code"
-          value={pLink.data}
-          bgColor={"transparent"}
-          fgColor="#ffffff"
-          size={500}
-        />
-      )}
+      <div id="product_data">
+        <text id="product_name">{product.name}</text>
+        <hr></hr>
+
+        <text id="prouct_desc">
+          {product.description.length > 0
+            ? product.description
+            : "No description."}
+        </text>
+      </div>
+      <div id="product_payment">
+        {pLink.isFetching ? (
+          <Loading className="Loading" />
+        ) : (
+          <QRCode
+            id="payment-qr-code"
+            value={pLink.data}
+            bgColor={"transparent"}
+            fgColor="#ffffff"
+            size={500}
+          />
+        )}
+      </div>
     </div>
   );
 };
