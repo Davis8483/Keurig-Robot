@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { StartScreen, ProductSelection } from "./Pages.tsx";
-import { MenuBar, ProductInfo } from "./Bar.tsx";
+import { MenuBarBase, ProductInfo } from "./MenuBar.tsx";
 import { ReactComponent as Loading } from "./loading.svg";
 import { useEffect, useState } from "react";
 import maximize_sound from "./maximize.ogg";
@@ -81,7 +81,7 @@ function App() {
     <div className="App">
       <QueryClientProvider client={queryClient}>
         {pageContents}
-        <MenuBar permutation={barType}>{barComponents}</MenuBar>
+        <MenuBarBase permutation={barType}>{barComponents}</MenuBarBase>
         <NotificationContainer />
       </QueryClientProvider>
     </div>

@@ -4,7 +4,7 @@ import { Kpod } from "./APImodels.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { ReactComponent as Loading } from "./loading.svg";
 
-export const MenuBar = (props) => {
+export const MenuBarBase = (props) => {
   var typeName = props.permutation || "BottomBar";
 
   return (
