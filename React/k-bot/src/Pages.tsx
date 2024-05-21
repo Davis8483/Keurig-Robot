@@ -42,7 +42,7 @@ export const ProductSelection = (props) => {
               (product) => {
                 props.onSelected(product, true);
               },
-              1000,
+              2000,
               pods[swiper.activeIndex]
             );
           }

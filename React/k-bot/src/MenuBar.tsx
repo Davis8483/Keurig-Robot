@@ -35,18 +35,18 @@ export const ProductInfo = (props) => {
     <div className="ProductInfo">
       <div id="product_data">
         <text id="product_name">{product.name}</text>
-        <hr></hr>
-
+        <hr />
         <text id="prouct_desc">
           {product.description.length > 0
             ? product.description
             : "No description."}
         </text>
       </div>
-      <div id="product_payment">
-        {pLink.isFetching ? (
-          <Loading className="Loading" />
-        ) : (
+      {pLink.isFetching ? (
+        <Loading className="Loading" />
+      ) : (
+        <div id="product_payment">
+          <div id="qr_label">Scan to Pay - ${product.price}</div>
           <QRCode
             id="payment-qr-code"
             value={pLink.data}
@@ -54,8 +54,8 @@ export const ProductInfo = (props) => {
             fgColor="#ffffff"
             size={500}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
