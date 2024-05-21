@@ -40,7 +40,7 @@ function App() {
       clone.play(); // Play the cloned element
     }
 
-    setBarComponents(<ProductInfo product={product} randID={Math.random()} />);
+    setBarComponents(<ProductInfo product={product} />);
   };
 
   const handleClick = () => {
@@ -66,16 +66,6 @@ function App() {
   useEffect(() => {
     window.addEventListener("mouseup", handleClick);
   }, []);
-
-  function imagesLoaded(parentNode) {
-    const imgElements = parentNode.querySelectorAll("img");
-    for (const img of imgElements) {
-      if (!img.complete) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   return (
     <div className="App">

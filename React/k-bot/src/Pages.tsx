@@ -37,13 +37,15 @@ export const ProductSelection = (props) => {
           props.onSelected(pods[swiper.activeIndex]);
         }}
         onInit={(swiper) => {
-          setTimeout(
-            (product) => {
-              props.onSelected(product, true);
-            },
-            1000,
-            pods[swiper.activeIndex]
-          );
+          if (pods.length > 0) {
+            setTimeout(
+              (product) => {
+                props.onSelected(product, true);
+              },
+              1000,
+              pods[swiper.activeIndex]
+            );
+          }
         }}
       >
         {pods.map((data) => {

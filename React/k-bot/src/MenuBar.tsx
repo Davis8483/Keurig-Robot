@@ -17,11 +17,11 @@ export const MenuBarBase = (props) => {
 export const ProductInfo = (props) => {
   const product = props.product as Kpod;
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ["productInfo", product.id, props.randID], // randID should be generated using Math.random() and is used to force the loading image instead of displaying old data
+  const pLink = useQuery({
+    queryKey: ["productInfo", product.id],
     queryFn: () =>
       fetch(
-        "/products/select?" + new URLSearchParams({ stripeID: product.id }),
+        "/products/select/?" + new URLSearchParams({ stripeID: product.id }),
         {
           method: "PUT",
           headers: {
@@ -33,12 +33,12 @@ export const ProductInfo = (props) => {
 
   return (
     <div className="ProductInfo">
-      {isPending ? (
+      {pLink.isFetching ? (
         <Loading className="Loading" />
       ) : (
         <QRCode
           id="payment-qr-code"
-          value={data}
+          value={pLink.data}
           bgColor={"transparent"}
           fgColor="#ffffff"
           size={500}
