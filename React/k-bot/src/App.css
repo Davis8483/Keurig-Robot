@@ -99,8 +99,7 @@ h1 {
 }
 
 .swiper-container {
-  position: absolute;
-  transform: translateY(20vh);
+  height: 100vh;
 }
 
 .swiper-img {
@@ -111,11 +110,12 @@ h1 {
   transition-duration: 0.5s;
   filter: opacity(0.6) blur(3px);
   transform: scale(0.7);
+  margin-top: 20vh;
 }
 
 .swiper-slide-active * {
   transition-duration: 0.5s;
-  filter: opacity(1);
+  filter: opacity(1) drop-shadow(0px 0px 50px rgb(255, 255, 255));
   transform: scale(1);
 }
 
