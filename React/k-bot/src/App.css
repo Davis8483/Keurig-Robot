@@ -150,7 +150,8 @@ h1 {
 }
 
 #qr_label {
-  background-color: #2f67f5;
+  background: linear-gradient(-60deg, #ff2e2e 35%, #2f67f5 35%);
+  display: flex;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   font-size: 2vw;

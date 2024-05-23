@@ -38,7 +38,10 @@ export const PaymentQR = (props) => {
         <Loading className="Loading" />
       ) : (
         <div id="product_payment">
-          <div id="qr_label">Scan to Pay • ${product.price}</div>
+          <div id="qr_label">
+            <div style={{ width: "70%" }}>Scan to Pay</div>
+            <div style={{ width: "30%" }}>${product.price}</div>
+          </div>
           <QRCode
             id="payment-qr-code"
             value={pLink.data}
